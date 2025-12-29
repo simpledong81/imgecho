@@ -136,7 +136,3 @@ imgecho/
 - **项目主页**: [https://github.com/Jeffreyforest/imgecho](https://github.com/Jeffreyforest/imgecho)
 - **在线演示**: [https://jeffreyforest.github.io/imgecho](https://jeffreyforest.github.io/imgecho)
 - **问题反馈**: 通过GitHub Issues提交
-
----
-
-*最后更新: 2024年12月 | Last Updated: December 2024*
