@@ -92,6 +92,7 @@ body {
     grid-template-columns: 1fr 320px;
     gap: 24px;
     min-height: calc(100vh - 120px);
+    align-items: start;
 }
 
 /* ===== 图片区域样式 ===== */
@@ -104,6 +105,8 @@ body {
     display: flex;
     flex-direction: column;
     gap: 16px;
+    height: fit-content;
+    min-height: 400px;
 }
 
 /* ===== Canvas容器 ===== */
@@ -203,6 +206,28 @@ body {
     border-radius: 8px;
     padding: 20px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    max-height: calc(100vh - 200px);
+    overflow-y: auto;
+    height: fit-content;
+}
+
+/* 滚动条样式 */
+.info-panel::-webkit-scrollbar {
+    width: 6px;
+}
+
+.info-panel::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 3px;
+}
+
+.info-panel::-webkit-scrollbar-thumb {
+    background: #cbd5e0;
+    border-radius: 3px;
+}
+
+.info-panel::-webkit-scrollbar-thumb:hover {
+    background: #a0aec0;
 }
 
 .info-panel h2 {
@@ -221,6 +246,23 @@ body {
     margin: 16px 0 8px 0;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.icon {
+    flex-shrink: 0;
+    color: #718096;
+}
+
+.control-group label {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #4a5568;
+    display: flex;
+    align-items: center;
+    gap: 6px;
 }
 
 /* ===== 按钮样式 ===== */
