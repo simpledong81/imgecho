@@ -66,13 +66,18 @@ python -m http.server 8000
 
 ### 前端技术 | Frontend Technologies
 - **HTML5 Canvas** - 图片处理和文字渲染
-- **Vanilla JavaScript** - 纯前端实现，无需框架依赖
-- **CSS3** - 现代化响应式设计
+- **Modern JavaScript (ES6+)** - 模块化设计，纯前端实现
+- **CSS3 with CSS Variables** - 现代化响应式设计，主题定制支持
+- **Canvas API** - 高性能图片渲染
+- **EXIF.js** - 图片EXIF信息解析
 
 ### 架构特点 | Architecture Features
 - **纯前端解决方案** - 无需后端服务器
-- **响应式设计** - 适配桌面和移动设备
-- **模块化代码** - 易于维护和扩展
+- **响应式设计** - 适配桌面、平板和移动设备
+- **模块化代码结构** - 易于维护和扩展
+- **拖拽上传功能** - 现代化的文件上传体验
+- **异步处理优化** - 流畅的用户体验
+- **防抖机制** - 优化性能，减少不必要的重绘
 
 ### 兼容性 | Compatibility
 - **现代浏览器** - Chrome, Firefox, Safari, Edge
@@ -86,7 +91,12 @@ python -m http.server 8000
 ```
 imgecho/
 ├── index.html          # 主页面 | Main page
-├── script.js           # 核心逻辑 | Core logic
+├── app.js              # 应用入口 | Application entry
+├── imageProcessor.js   # 图片处理 | Image processing
+├── exifParser.js       # EXIF解析 | EXIF parsing
+├── metadataRenderer.js # 元数据渲染 | Metadata rendering
+├── exportManager.js    # 导出管理 | Export management
+├── utils.js            # 工具函数 | Utility functions
 ├── style.css           # 样式文件 | Styles
 ├── locales.js          # 语言管理 | Language management
 ├── assets/             # 资源文件 | Assets
@@ -100,16 +110,20 @@ imgecho/
 ## 🔧 使用指南 | Usage Guide
 
 ### 基本操作 | Basic Operations
-1. **上传图片** - 点击上传按钮或拖拽图片到页面
+1. **上传图片** - 点击上传按钮或拖拽图片到上传区域
 2. **编辑信息** - 在右侧面板填写相机参数和文字内容
-3. **调整样式** - 使用滑块调整文字样式和位置
-4. **导出图片** - 点击导出按钮下载处理后的图片
+3. **调整样式** - 使用滑块调整文字样式、大小和位置
+4. **实时预览** - 所有修改即时在画布上显示
+5. **导出图片** - 点击导出按钮下载处理后的图片
 
 ### 高级功能 | Advanced Features
-- **实时预览** - 所有修改即时生效
-- **撤销重做** - 支持操作历史记录
-- **多语言切换** - 右上角语言选择器
+- **拖拽上传** - 支持直接拖拽图片到上传区域
+- **EXIF自动解析** - 自动读取图片中的相机信息
+- **模糊效果调整** - 可调整图片模糊程度
+- **灵活的文字位置** - 多种预设位置可选
+- **中英文切换** - 右上角语言选择器
 - **响应式布局** - 自动适配不同屏幕尺寸
+- **流畅的用户体验** - 优化的异步处理和防抖机制
 
 ---
 
