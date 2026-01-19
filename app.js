@@ -2,10 +2,14 @@
  * 主应用模块
  * 整合所有模块，初始化应用
  */
+// 首先加载 EXIF 库
+import './lib/exif-loader.js';
+
 import { ImageProcessor } from './imageProcessor.js';
 import { ExifParser } from './exifParser.js';
 import { MetadataRenderer } from './metadataRenderer.js';
 import { ExportManager } from './exportManager.js';
+import languageManager from './locales.js';
 
 /**
  * 主应用类
@@ -13,7 +17,7 @@ import { ExportManager } from './exportManager.js';
 export class ImgEchoApp {
     constructor() {
         this.imageProcessor = new ImageProcessor();
-        this.languageManager = null;
+        this.languageManager = languageManager;
         this.isInitialized = false;
     }
 
@@ -23,26 +27,19 @@ export class ImgEchoApp {
      */
     initialize() {
         if (this.isInitialized) return;
-        
+
         // 初始化图片处理器
         this.imageProcessor.initialize();
-        
-        // 初始化语言管理器引用
-        if (typeof languageManager !== 'undefined') {
-            this.languageManager = languageManager;
-        }
-        
+
         // 设置事件监听器
         this.setupEventListeners();
-        
+
         // 初始化语言管理器后更新界面
-        if (this.languageManager) {
-            this.languageManager.updateUI();
-        }
-        
+        this.languageManager.updateUI();
+
         // 加载示例图片
         this.loadSampleImage();
-        
+
         this.isInitialized = true;
     }
 
@@ -98,15 +95,11 @@ export class ImgEchoApp {
         if (languageSelect) {
             languageSelect.addEventListener('change', (e) => {
                 const selectedLanguage = e.target.value;
-                if (this.languageManager) {
-                    this.languageManager.setLanguage(selectedLanguage);
-                }
+                this.languageManager.setLanguage(selectedLanguage);
             });
-            
+
             // 设置当前选中的语言
-            if (this.languageManager) {
-                languageSelect.value = this.languageManager.currentLanguage;
-            }
+            languageSelect.value = this.languageManager.currentLanguage;
         }
         
         // 导出按钮事件
@@ -188,9 +181,7 @@ export class ImgEchoApp {
     loadSampleImage() {
         this.imageProcessor.loadSampleImage(() => {
             // 设置默认元数据
-            if (this.languageManager) {
-                MetadataRenderer.setDefaultMetadata(this.languageManager);
-            }
+            MetadataRenderer.setDefaultMetadata(this.languageManager);
             // 刷新画布
             this.scheduleRefresh();
         });

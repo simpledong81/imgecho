@@ -3,150 +3,150 @@
 const locales = {
     en: {
         // 应用标题和描述
-        appTitle: "ImgEcho",
-        appSubtitle: "Image Information Display and Editing Tool",
-        appDescription: "ImgEcho - Modern image information display and editing tool, supports EXIF information reading and image metadata editing",
+        appTitle: 'ImgEcho',
+        appSubtitle: 'Image Information Display and Editing Tool',
+        appDescription: 'ImgEcho - Modern image information display and editing tool, supports EXIF information reading and image metadata editing',
         
         // 页面标题
-        pageTitle: "ImgEcho - Image Information Display and Editing Tool",
+        pageTitle: 'ImgEcho - Image Information Display and Editing Tool',
         
         // 导航和按钮
-        uploadImage: "Upload Image",
-        blur: "Blur",
-        exportImage: "Export Image",
-        exportInfoPage: "Export Info Page",
+        uploadImage: 'Upload Image',
+        blur: 'Blur',
+        exportImage: 'Export Image',
+        exportInfoPage: 'Export Info Page',
         
         // 图片信息部分
-        imageInfo: "Image Information",
-        basicInfo: "Basic Information",
-        camera: "Camera",
-        lens: "Lens",
-        iso: "ISO",
-        aperture: "Aperture",
-        shutter: "Shutter",
-        location: "Location",
+        imageInfo: 'Image Information',
+        basicInfo: 'Basic Information',
+        camera: 'Camera',
+        lens: 'Lens',
+        iso: 'ISO',
+        aperture: 'Aperture',
+        shutter: 'Shutter',
+        location: 'Location',
         
         // 文字设置
-        textSettings: "Text Settings",
-        fontFamily: "Font",
-        fontWeight: "Weight",
-        fontSize: "Size",
-        fontPosition: "Position",
+        textSettings: 'Text Settings',
+        fontFamily: 'Font',
+        fontWeight: 'Weight',
+        fontSize: 'Size',
+        fontPosition: 'Position',
         
         // 字体选项
-        fontNormal: "Normal",
-        fontBold: "Bold",
+        fontNormal: 'Normal',
+        fontBold: 'Bold',
         
         // 位置选项
-        positionTopLeft: "Top Left",
-        positionTopRight: "Top Right",
-        positionBottomLeft: "Bottom Left",
-        positionBottomRight: "Bottom Right",
-        positionCenter: "Center",
+        positionTopLeft: 'Top Left',
+        positionTopRight: 'Top Right',
+        positionBottomLeft: 'Bottom Left',
+        positionBottomRight: 'Bottom Right',
+        positionCenter: 'Center',
         
         // 其他信息
-        otherInfo: "Other Information",
-        copyright: "Copyright",
-        notes: "Notes",
-        displayMode: "Display Mode",
+        otherInfo: 'Other Information',
+        copyright: 'Copyright',
+        notes: 'Notes',
+        displayMode: 'Display Mode',
         
         // 显示模式选项
-        modeFull: "Full Mode",
-        modeSimple: "Simple Mode",
+        modeFull: 'Full Mode',
+        modeSimple: 'Simple Mode',
         
         // 占位符文本
-        cameraPlaceholder: "Camera model",
-        lensPlaceholder: "Lens model",
-        isoPlaceholder: "ISO value",
-        aperturePlaceholder: "Aperture value",
-        shutterPlaceholder: "Shutter speed",
-        locationPlaceholder: "Shooting location",
-        copyrightPlaceholder: "Copyright information",
-        notesPlaceholder: "Add notes",
+        cameraPlaceholder: 'Camera model',
+        lensPlaceholder: 'Lens model',
+        isoPlaceholder: 'ISO value',
+        aperturePlaceholder: 'Aperture value',
+        shutterPlaceholder: 'Shutter speed',
+        locationPlaceholder: 'Shooting location',
+        copyrightPlaceholder: 'Copyright information',
+        notesPlaceholder: 'Add notes',
         
         // 语言切换
-        language: "Language",
-        english: "English",
-        chinese: "中文",
+        language: 'Language',
+        english: 'English',
+        chinese: '中文',
         
         // 默认元数据
-        defaultLocation: "Unknown",
-        defaultNotes: "Sample photo",
-        defaultCopyright: "© 2023 Sample Copyright"
+        defaultLocation: 'Unknown',
+        defaultNotes: 'Sample photo',
+        defaultCopyright: '© 2023 Sample Copyright'
     },
     
     zh: {
         // 应用标题和描述
-        appTitle: "ImgEcho",
-        appSubtitle: "图片信息展示与编辑工具",
-        appDescription: "ImgEcho - 现代化的图片信息展示与编辑工具，支持EXIF信息读取和图片元数据编辑",
+        appTitle: 'ImgEcho',
+        appSubtitle: '图片信息展示与编辑工具',
+        appDescription: 'ImgEcho - 现代化的图片信息展示与编辑工具，支持EXIF信息读取和图片元数据编辑',
         
         // 页面标题
-        pageTitle: "ImgEcho - 图片信息展示与编辑工具",
+        pageTitle: 'ImgEcho - 图片信息展示与编辑工具',
         
         // 导航和按钮
-        uploadImage: "上传图片",
-        blur: "模糊",
-        exportImage: "导出图片",
-        exportInfoPage: "导出信息页",
+        uploadImage: '上传图片',
+        blur: '模糊',
+        exportImage: '导出图片',
+        exportInfoPage: '导出信息页',
         
         // 图片信息部分
-        imageInfo: "图片信息",
-        basicInfo: "基本信息",
-        camera: "相机",
-        lens: "镜头",
-        iso: "ISO",
-        aperture: "光圈",
-        shutter: "快门",
-        location: "地点",
+        imageInfo: '图片信息',
+        basicInfo: '基本信息',
+        camera: '相机',
+        lens: '镜头',
+        iso: 'ISO',
+        aperture: '光圈',
+        shutter: '快门',
+        location: '地点',
         
         // 文字设置
-        textSettings: "文字设置",
-        fontFamily: "字体",
-        fontWeight: "粗细",
-        fontSize: "大小",
-        fontPosition: "位置",
+        textSettings: '文字设置',
+        fontFamily: '字体',
+        fontWeight: '粗细',
+        fontSize: '大小',
+        fontPosition: '位置',
         
         // 字体选项
-        fontNormal: "常规",
-        fontBold: "粗体",
+        fontNormal: '常规',
+        fontBold: '粗体',
         
         // 位置选项
-        positionTopLeft: "左上",
-        positionTopRight: "右上",
-        positionBottomLeft: "左下",
-        positionBottomRight: "右下",
-        positionCenter: "中心",
+        positionTopLeft: '左上',
+        positionTopRight: '右上',
+        positionBottomLeft: '左下',
+        positionBottomRight: '右下',
+        positionCenter: '中心',
         
         // 其他信息
-        otherInfo: "其他信息",
-        copyright: "版权",
-        notes: "注释",
-        displayMode: "显示模式",
+        otherInfo: '其他信息',
+        copyright: '版权',
+        notes: '注释',
+        displayMode: '显示模式',
         
         // 显示模式选项
-        modeFull: "完整模式",
-        modeSimple: "简洁模式",
+        modeFull: '完整模式',
+        modeSimple: '简洁模式',
         
         // 占位符文本
-        cameraPlaceholder: "相机型号",
-        lensPlaceholder: "镜头型号",
-        isoPlaceholder: "ISO值",
-        aperturePlaceholder: "光圈值",
-        shutterPlaceholder: "快门速度",
-        locationPlaceholder: "拍摄地点",
-        copyrightPlaceholder: "版权信息",
-        notesPlaceholder: "添加注释",
+        cameraPlaceholder: '相机型号',
+        lensPlaceholder: '镜头型号',
+        isoPlaceholder: 'ISO值',
+        aperturePlaceholder: '光圈值',
+        shutterPlaceholder: '快门速度',
+        locationPlaceholder: '拍摄地点',
+        copyrightPlaceholder: '版权信息',
+        notesPlaceholder: '添加注释',
         
         // 语言切换
-        language: "语言",
-        english: "English",
-        chinese: "中文",
+        language: '语言',
+        english: 'English',
+        chinese: '中文',
         
         // 默认元数据
-        defaultLocation: "未知",
-        defaultNotes: "示例照片",
-        defaultCopyright: "© 2023 示例版权"
+        defaultLocation: '未知',
+        defaultNotes: '示例照片',
+        defaultCopyright: '© 2023 示例版权'
     }
 };
 
@@ -317,3 +317,11 @@ class LanguageManager {
 
 // 创建全局语言管理器实例
 const languageManager = new LanguageManager();
+
+// 暴露到全局作用域（向后兼容）
+if (typeof window !== 'undefined') {
+    window.languageManager = languageManager;
+}
+
+// 导出供其他模块使用
+export default languageManager;

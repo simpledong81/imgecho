@@ -39,26 +39,38 @@
 ## 🚀 快速开始 | Quick Start
 
 ### 在线使用 | Online Usage
-直接访问：[https://jeffreyforest.github.io/imgecho](https://jeffreyforest.github.io/imgecho)
+直接访问：[https://simpledong81.github.io/imgecho](https://simpledong81.github.io/imgecho)
 
-### 本地运行 | Local Development
+### 开发环境 | Development Environment
+
+**推荐使用 npm 开发环境（现代化工具链）：**
+
 ```bash
-# 使用Python内置服务器
+# 克隆项目
+git clone https://github.com/simpledong81/imgecho.git
+cd imgecho
+
+# 安装依赖
+npm install
+
+# 启动开发服务器（支持热更新）
+npm run dev
+
+# 构建生产版本
+npm run build
+```
+
+**或使用简单的静态服务器：**
+
+```bash
+# 使用 Python 内置服务器
 python -m http.server 8000
 
-# 或使用Node.js服务器（如果有）
+# 或使用 Node.js 服务器
 npx http-server -p 8000
 ```
 
-### 开发环境 | Development
-```bash
-# 克隆项目
-git clone https://github.com/Jeffreyforest/imgecho.git
-cd imgecho
-
-# 启动本地服务器
-python -m http.server 8000
-```
+> 💡 **提示**：查看 [SETUP.md](SETUP.md) 获取详细的 5 分钟快速设置指南
 
 ---
 
@@ -147,6 +159,6 @@ imgecho/
 
 ## 📞 联系信息 | Contact
 
-- **项目主页**: [https://github.com/Jeffreyforest/imgecho](https://github.com/Jeffreyforest/imgecho)
-- **在线演示**: [https://jeffreyforest.github.io/imgecho](https://jeffreyforest.github.io/imgecho)
+- **项目主页**: [https://github.com/simpledong81/imgecho](https://github.com/simpledong81/imgecho)
+- **在线演示**: [https://simpledong81.github.io/imgecho](https://simpledong81.github.io/imgecho)
 - **问题反馈**: 通过GitHub Issues提交

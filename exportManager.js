@@ -204,11 +204,11 @@ export class ExportManager {
             <h3>📸 图片信息</h3>
             <div class="metadata-grid">
                 ${Object.entries(metadata).map(([key, value]) => 
-                    value ? `<div class="metadata-item">
+        value ? `<div class="metadata-item">
                         <span class="metadata-label">${key}</span>
                         <span class="metadata-value">${value}</span>
                     </div>` : ''
-                ).filter(Boolean).join('')}
+    ).filter(Boolean).join('')}
             </div>
         </div>
         
