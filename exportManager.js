@@ -3,6 +3,7 @@
  * 处理图片和信息页的导出功能
  */
 import { MetadataRenderer } from './metadataRenderer.js';
+import { Dialog } from './dialog.js';
 
 /**
  * 导出管理器类
@@ -13,12 +14,12 @@ export class ExportManager {
      * @param {ImageProcessor} imageProcessor - 图片处理器实例
      * @param {Object} languageManager - 语言管理器实例
      */
-    static exportImageWithCanvas(imageProcessor, languageManager) {
+    static async exportImageWithCanvas(imageProcessor, languageManager) {
         if (!imageProcessor.getOriginalImage()) {
-            alert('请先上传图片！');
+            await Dialog.alert('请先上传图片！', '提示');
             return;
         }
-        
+
         this.exportWithCanvas(imageProcessor, languageManager);
     }
 
@@ -27,12 +28,12 @@ export class ExportManager {
      * @param {ImageProcessor} imageProcessor - 图片处理器实例
      * @param {Object} languageManager - 语言管理器实例
      */
-    static exportInfoPage(imageProcessor, languageManager) {
+    static async exportInfoPage(imageProcessor, languageManager) {
         if (!imageProcessor.getOriginalImage()) {
-            alert('请先上传图片！');
+            await Dialog.alert('请先上传图片！', '提示');
             return;
         }
-        
+
         this.exportWithoutCanvas(imageProcessor, languageManager);
     }
 

@@ -25,6 +25,13 @@
                     <h1>ImgEcho</h1>
                     <p>Image Information Display and Editing Tool</p>
                 </div>
+
+                <!-- 模式切换器 -->
+                <div class="mode-switcher">
+                    <button id="single-mode-btn" class="mode-btn active">单张模式</button>
+                    <button id="batch-mode-btn" class="mode-btn">批量模式</button>
+                </div>
+
                 <div class="language-switcher">
                     <label for="language-select">Language:</label>
                     <select id="language-select">
@@ -98,8 +105,46 @@
                         </button>
                     </div>
                 </section>
+
+                <!-- 批量处理面板 -->
+                <section class="batch-panel" id="batch-panel" style="display: none;">
+                    <div class="batch-header">
+                        <h3>批量队列 (<span id="queue-count">0</span> 张图片)</h3>
+                        <button id="clear-queue-btn" class="btn btn-secondary">清空队列</button>
+                    </div>
+
+                    <div class="batch-queue" id="batch-queue">
+                        <!-- 动态渲染队列项 -->
+                    </div>
+
+                    <div class="batch-controls">
+                        <button id="apply-to-all-btn" class="btn btn-secondary">
+                            <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            应用当前设置到全部
+                        </button>
+                        <button id="batch-export-btn" class="btn btn-primary">
+                            <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                <polyline points="7 10 12 15 17 10"/>
+                                <line x1="12" y1="15" x2="12" y2="3"/>
+                            </svg>
+                            导出全部为 ZIP
+                        </button>
+                    </div>
+
+                    <div class="batch-progress" id="batch-progress" style="display: none;">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progress-fill"></div>
+                        </div>
+                        <p class="progress-text">
+                            处理中: <span id="progress-current">0</span> / <span id="progress-total">0</span>
+                        </p>
+                    </div>
+                </section>
             </section>
-            
+
             <aside class="info-panel">
                 <h2>图片信息</h2>
                 
@@ -325,7 +370,23 @@
             </aside>
         </main>
     </div>
-    
+
+    <!-- 自定义对话框 -->
+    <div id="custom-dialog-overlay" class="dialog-overlay" style="display: none;">
+        <div class="dialog-box">
+            <div class="dialog-header">
+                <h3 id="dialog-title">提示</h3>
+            </div>
+            <div class="dialog-content">
+                <p id="dialog-message"></p>
+            </div>
+            <div class="dialog-footer">
+                <button id="dialog-cancel" class="btn btn-secondary" style="display: none;">取消</button>
+                <button id="dialog-confirm" class="btn btn-primary">确定</button>
+            </div>
+        </div>
+    </div>
+
     <!-- 外部JavaScript文件 -->
     <script type="module" src="./app.js"></script>
 </body>

@@ -72,7 +72,24 @@ const locales = {
         // 默认元数据
         defaultLocation: 'Unknown',
         defaultNotes: 'Sample photo',
-        defaultCopyright: '© 2023 Sample Copyright'
+        defaultCopyright: '© 2023 Sample Copyright',
+
+        // 批量模式
+        singleMode: 'Single Mode',
+        batchMode: 'Batch Mode',
+        batchQueue: 'Batch Queue',
+        images: 'images',
+        clearQueue: 'Clear Queue',
+        applyToAll: 'Apply Settings to All',
+        exportAsZip: 'Export All as ZIP',
+        processing: 'Processing',
+        preview: 'Preview',
+        remove: 'Remove',
+        batchQueueEmpty: 'Queue is empty, please upload images',
+        statusPending: 'Pending',
+        statusProcessing: 'Processing',
+        statusCompleted: 'Completed',
+        statusError: 'Failed'
     },
     
     zh: {
@@ -146,7 +163,24 @@ const locales = {
         // 默认元数据
         defaultLocation: '未知',
         defaultNotes: '示例照片',
-        defaultCopyright: '© 2023 示例版权'
+        defaultCopyright: '© 2023 示例版权',
+
+        // 批量模式
+        singleMode: '单张模式',
+        batchMode: '批量模式',
+        batchQueue: '批量队列',
+        images: '张图片',
+        clearQueue: '清空队列',
+        applyToAll: '应用当前设置到全部',
+        exportAsZip: '导出全部为 ZIP',
+        processing: '处理中',
+        preview: '预览',
+        remove: '移除',
+        batchQueueEmpty: '队列为空，请上传图片',
+        statusPending: '待处理',
+        statusProcessing: '处理中',
+        statusCompleted: '已完成',
+        statusError: '失败'
     }
 };
 

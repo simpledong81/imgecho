@@ -2,6 +2,7 @@
  * 图片处理模块
  * 处理图片上传、显示和渲染
  */
+import { Dialog } from './dialog.js';
 
 /**
  * 图片处理类
@@ -62,11 +63,11 @@ export class ImageProcessor {
      * 处理文件上传
      * @param {File} file - 上传的文件
      */
-    handleFileUpload(file) {
+    async handleFileUpload(file) {
         console.log('开始处理文件上传:', file.name, file.type, file.size);
-        
+
         if (!file.type.startsWith('image/')) {
-            alert('请选择图片文件！');
+            await Dialog.alert('请选择图片文件！', '提示');
             return;
         }
         
@@ -84,15 +85,15 @@ export class ImageProcessor {
                 this.updateCanvasContainer(true);
                 console.log('图片显示完成');
             };
-            img.onerror = (error) => {
+            img.onerror = async (error) => {
                 console.error('图片加载失败:', error);
-                alert('图片加载失败，请重试！');
+                await Dialog.alert('图片加载失败，请重试！', '错误');
             };
             img.src = this.currentImage;
         };
-        reader.onerror = (error) => {
+        reader.onerror = async (error) => {
             console.error('文件读取失败:', error);
-            alert('文件读取失败，请重试！');
+            await Dialog.alert('文件读取失败，请重试！', '错误');
         };
         reader.onloadstart = () => {
             console.log('开始读取文件...');
@@ -123,15 +124,37 @@ export class ImageProcessor {
         // 设置canvas尺寸为图片原始尺寸
         this.canvas.width = img.naturalWidth;
         this.canvas.height = img.naturalHeight;
-        
-        // 计算显示比例
-        const maxDisplayWidth = this.canvas.parentElement.clientWidth - 40;
-        const maxDisplayHeight = 500;
-        const scale = Math.min(maxDisplayWidth / this.canvas.width, maxDisplayHeight / this.canvas.height, 1);
-        
+
+        // 智能计算显示比例，充分利用可用空间
+        const containerWidth = this.canvas.parentElement.clientWidth - 40;
+        const containerHeight = Math.max(window.innerHeight - 300, 600); // 至少600px
+
+        // 根据图片宽高比和容器宽高比决定缩放策略
+        const imageAspectRatio = this.canvas.width / this.canvas.height;
+        const containerAspectRatio = containerWidth / containerHeight;
+
+        let scale;
+        if (imageAspectRatio > containerAspectRatio) {
+            // 横向图片：以宽度为基准
+            scale = Math.min(containerWidth / this.canvas.width, 1);
+        } else {
+            // 纵向图片：以高度为基准
+            scale = Math.min(containerHeight / this.canvas.height, 1);
+        }
+
+        // 但不能超过容器的另一个维度
+        scale = Math.min(
+            scale,
+            containerWidth / this.canvas.width,
+            containerHeight / this.canvas.height,
+            1
+        );
+
         // 设置canvas CSS显示尺寸
         this.canvas.style.width = `${this.canvas.width * scale}px`;
         this.canvas.style.height = `${this.canvas.height * scale}px`;
+
+        console.log(`画布尺寸: ${this.canvas.width}x${this.canvas.height}, 显示尺寸: ${this.canvas.width * scale}x${this.canvas.height * scale}, 缩放比例: ${scale}`);
         
         try {
             // 清除画布
@@ -161,7 +184,7 @@ export class ImageProcessor {
             console.log('图片显示成功');
         } catch (error) {
             console.error('图片绘制失败:', error);
-            alert('图片绘制失败，请重试！');
+            Dialog.alert('图片绘制失败，请重试！', '错误');
         }
     }
 

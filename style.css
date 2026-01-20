@@ -140,7 +140,7 @@ body {
     flex-direction: column;
     gap: var(--spacing-md);
     height: fit-content;
-    min-height: 400px;
+    min-height: 700px; /* 从 400px 增加到 700px */
 }
 
 /* ===== Canvas容器 ===== */
@@ -152,8 +152,9 @@ body {
     background: var(--background-color);
     border: 1px dashed var(--border-color);
     border-radius: var(--radius-md);
-    min-height: 400px;
-    overflow: hidden;
+    min-height: 600px;
+    width: 100%; /* 确保占满宽度 */
+    overflow: auto; /* 改为 auto，允许滚动超大图片 */
     position: relative;
     cursor: pointer;
     transition: all var(--transition-fast);
@@ -533,4 +534,385 @@ body {
     color: var(--primary-color);
     opacity: 1;
     transform: scale(1.1);
+}
+
+/* ===== 批量模式样式 ===== */
+
+/* 模式切换器 */
+.mode-switcher {
+    display: flex;
+    gap: 4px;
+    background: var(--background-color);
+    border-radius: var(--radius-md);
+    padding: 4px;
+}
+
+.mode-btn {
+    padding: 8px 16px;
+    border: none;
+    background: transparent;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    color: var(--text-secondary);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-normal);
+}
+
+.mode-btn:hover {
+    background: rgba(66, 153, 225, 0.1);
+    color: var(--primary-color);
+}
+
+.mode-btn.active {
+    background: var(--primary-color);
+    color: white;
+}
+
+/* 批量面板 */
+.batch-panel {
+    background: var(--background-color);
+    border: none;
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md);
+    margin-top: var(--spacing-md);
+}
+
+.batch-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-md);
+    padding-bottom: var(--spacing-sm);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.batch-header h3 {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-bold);
+    color: var(--text-primary);
+    margin: 0;
+}
+
+/* 队列容器 */
+.batch-queue {
+    max-height: 300px;
+    overflow-y: auto;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-sm);
+    margin-bottom: var(--spacing-md);
+    background: var(--background-color);
+}
+
+/* 自定义滚动条 */
+.batch-queue::-webkit-scrollbar {
+    width: 8px;
+}
+
+.batch-queue::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.batch-queue::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 4px;
+}
+
+.batch-queue::-webkit-scrollbar-thumb:hover {
+    background: var(--border-hover);
+}
+
+/* 空队列提示 */
+.queue-empty-message {
+    text-align: center;
+    padding: var(--spacing-xl);
+    color: var(--text-muted);
+    font-size: var(--font-size-sm);
+}
+
+/* 队列项 */
+.queue-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm);
+    border-bottom: 1px solid var(--border-color);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    background: white;
+    border-radius: var(--radius-sm);
+    margin-bottom: var(--spacing-xs);
+}
+
+.queue-item:last-child {
+    border-bottom: none;
+}
+
+.queue-item:hover {
+    background: var(--background-color);
+    transform: translateX(2px);
+}
+
+.queue-item.active {
+    background: rgba(66, 153, 225, 0.1);
+    border-left: 3px solid var(--primary-color);
+    padding-left: calc(var(--spacing-sm) - 3px);
+}
+
+/* 缩略图 */
+.queue-thumbnail {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-color);
+    flex-shrink: 0;
+}
+
+/* 队列项信息 */
+.queue-item-info {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+}
+
+.queue-item-name {
+    font-weight: var(--font-weight-normal);
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin: 0 0 var(--spacing-xs) 0;
+    font-size: var(--font-size-sm);
+}
+
+.queue-item-status {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    padding: 2px 8px;
+    border-radius: var(--radius-sm);
+    background: var(--background-color);
+    display: inline-block;
+}
+
+.queue-item-status.pending {
+    color: #718096;
+    background: #e2e8f0;
+}
+
+.queue-item-status.processing {
+    color: #3182ce;
+    background: #bee3f8;
+}
+
+.queue-item-status.completed {
+    color: #22c55e;
+    background: #d1fae5;
+}
+
+.queue-item-status.error {
+    color: #ef4444;
+    background: #fee2e2;
+}
+
+/* 队列项操作按钮 */
+.queue-item-actions {
+    display: flex;
+    gap: var(--spacing-xs);
+    flex-shrink: 0;
+}
+
+.btn-icon {
+    width: 32px;
+    height: 32px;
+    padding: 4px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    border-radius: var(--radius-sm);
+    transition: background var(--transition-fast);
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-icon:hover {
+    background: var(--background-color);
+    color: var(--primary-color);
+}
+
+.btn-icon svg {
+    width: 20px;
+    height: 20px;
+}
+
+.reset-btn:hover {
+    color: #2196F3 !important;
+}
+
+.remove-btn:hover {
+    color: #f44336 !important;
+}
+
+/* 批量控制按钮 */
+.batch-controls {
+    display: flex;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-md);
+}
+
+.batch-controls .btn {
+    flex: 1;
+}
+
+/* 进度条容器 */
+.batch-progress {
+    background: var(--background-color);
+    padding: var(--spacing-md);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-color);
+}
+
+.progress-bar {
+    width: 100%;
+    height: 24px;
+    background: var(--border-color);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    margin-bottom: var(--spacing-sm);
+    position: relative;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary-color), var(--primary-hover));
+    transition: width 0.3s ease;
+    width: 0%;
+    border-radius: var(--radius-sm);
+}
+
+.progress-text {
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: var(--font-size-sm);
+    margin: 0;
+}
+
+/* 响应式设计 - 移动端 */
+@media (max-width: 768px) {
+    .mode-switcher {
+        width: 100%;
+        margin-bottom: var(--spacing-sm);
+    }
+
+    .batch-queue {
+        max-height: 200px;
+    }
+
+    .queue-thumbnail {
+        width: 50px;
+        height: 50px;
+    }
+
+    .batch-controls {
+        flex-direction: column;
+    }
+
+    .batch-controls .btn {
+        width: 100%;
+    }
+}
+
+/* 响应式设计 - 平板 */
+@media (max-width: 1024px) {
+    .header-content {
+        flex-wrap: wrap;
+        gap: var(--spacing-sm);
+    }
+
+    .mode-switcher {
+        order: 3;
+        width: 100%;
+    }
+}
+
+/* ==================== 自定义对话框样式 ==================== */
+.dialog-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.dialog-box {
+    background: var(--card-background);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    min-width: 320px;
+    max-width: 500px;
+    margin: var(--spacing-md);
+    animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.dialog-header {
+    padding: var(--spacing-md);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.dialog-header h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    color: var(--text-primary);
+}
+
+.dialog-content {
+    padding: var(--spacing-lg);
+}
+
+.dialog-content p {
+    margin: 0;
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+.dialog-footer {
+    padding: var(--spacing-md);
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    gap: var(--spacing-sm);
+    justify-content: flex-end;
+}
+
+.dialog-footer .btn {
+    min-width: 80px;
 }
