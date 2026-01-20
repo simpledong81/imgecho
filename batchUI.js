@@ -50,7 +50,7 @@ export class BatchUI {
      */
     bindEvents() {
         // 监听队列更新
-        this.batchProcessor.addEventListener('queue-updated', (e) => {
+        this.batchProcessor.addEventListener('queue-updated', () => {
             this.renderQueue();
         });
 

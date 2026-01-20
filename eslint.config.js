@@ -27,6 +27,8 @@ export default [
                 requestAnimationFrame: 'readonly',
                 setTimeout: 'readonly',
                 clearTimeout: 'readonly',
+                EventTarget: 'readonly',
+                CustomEvent: 'readonly',
             },
         },
         rules: {
