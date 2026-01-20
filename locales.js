@@ -84,6 +84,7 @@ const locales = {
         exportAsZip: 'Export All as ZIP',
         processing: 'Processing',
         preview: 'Preview',
+        reset: 'Reset',
         remove: 'Remove',
         batchQueueEmpty: 'Queue is empty, please upload images',
         statusPending: 'Pending',
@@ -175,6 +176,7 @@ const locales = {
         exportAsZip: '导出全部为 ZIP',
         processing: '处理中',
         preview: '预览',
+        reset: '还原',
         remove: '移除',
         batchQueueEmpty: '队列为空，请上传图片',
         statusPending: '待处理',
@@ -329,9 +331,13 @@ class LanguageManager {
     updateButtonTexts() {
         const exportBtn = document.getElementById('export-btn');
         const exportInfoBtn = document.getElementById('export-info-btn');
-        
+        const singleModeBtn = document.getElementById('single-mode-btn');
+        const batchModeBtn = document.getElementById('batch-mode-btn');
+
         if (exportBtn) exportBtn.textContent = this.get('exportImage');
         if (exportInfoBtn) exportInfoBtn.textContent = this.get('exportInfoPage');
+        if (singleModeBtn) singleModeBtn.textContent = this.get('singleMode');
+        if (batchModeBtn) batchModeBtn.textContent = this.get('batchMode');
     }
     
     updateSectionTitles() {
