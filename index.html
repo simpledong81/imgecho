@@ -4,16 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ImgEcho - Image Information Display and Editing Tool</title>
-    
+
     <!-- 网站元信息 -->
     <meta name="description" content="ImgEcho - Modern image information display and editing tool, supports EXIF information reading and image metadata editing">
     <meta name="keywords" content="image editing,EXIF,metadata,image processing,frontend tool">
     <meta name="author" content="ImgEcho Team">
     <meta name="theme-color" content="#4299e1">
-    
+
     <!-- 外部样式表 -->
     <link rel="stylesheet" href="./style.css">
-    
+
     <!-- 网站图标 -->
     <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📸</text></svg>">
 </head>
@@ -41,7 +41,7 @@
                 </div>
             </div>
         </header>
-        
+
         <main class="main-content">
             <section class="image-section">
                 <article class="canvas-container" id="drop-zone">
@@ -56,7 +56,7 @@
                     </div>
                     <canvas id="image-canvas"></canvas>
                 </article>
-                
+
                 <section class="controls">
                     <div class="control-row">
                         <div class="control-group">
@@ -71,7 +71,7 @@
                             </label>
                             <input type="file" id="file-input" accept="image/*" class="file-input" aria-label="选择图片文件">
                         </div>
-                        
+
                         <div class="control-group">
                             <label for="blur-slider">
                                 <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -83,7 +83,7 @@
                             <input type="range" id="blur-slider" min="0" max="10" step="0.1" value="0" aria-label="Blur intensity">
                         </div>
                     </div>
-                    
+
                     <div class="export-controls">
                         <button id="export-btn" class="btn btn-primary" aria-label="Export image">
                             <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -147,7 +147,7 @@
 
             <aside class="info-panel">
                 <h2>图片信息</h2>
-                
+
                 <section class="info-section">
                     <h3 class="section-title">
                         <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -167,7 +167,7 @@
                             </label>
                             <input type="text" id="camera" placeholder="相机型号" aria-label="Camera model">
                         </div>
-                        
+
                         <div class="control-group">
                             <label for="lens">
                                 <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -179,7 +179,7 @@
                             <input type="text" id="lens" placeholder="镜头型号" aria-label="Lens model">
                         </div>
                     </div>
-                    
+
                     <div class="control-row">
                         <div class="control-group">
                             <label for="iso">
@@ -192,7 +192,7 @@
                             </label>
                             <input type="text" id="iso" placeholder="ISO值" aria-label="ISO value">
                         </div>
-                        
+
                         <div class="control-group">
                             <label for="aperture">
                                 <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -204,7 +204,7 @@
                             <input type="text" id="aperture" placeholder="光圈值" aria-label="Aperture value">
                         </div>
                     </div>
-                    
+
                     <div class="control-row">
                         <div class="control-group">
                             <label for="shutter">
@@ -216,7 +216,7 @@
                             </label>
                             <input type="text" id="shutter" placeholder="快门速度" aria-label="Shutter speed">
                         </div>
-                        
+
                         <div class="control-group">
                             <label for="location">
                                 <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -229,7 +229,7 @@
                         </div>
                     </div>
                 </section>
-                
+
                 <section class="info-section">
                     <h3 class="section-title">
                         <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -263,7 +263,7 @@
                                 <option value="Tahoma, 'Noto Sans CJK SC', sans-serif">Tahoma / Noto Sans CJK</option>
                             </select>
                         </div>
-                        
+
                         <div class="control-group">
                             <label for="font-weight">
                                 <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -279,7 +279,7 @@
                             </select>
                         </div>
                     </div>
-                    
+
                     <div class="control-row">
                         <div class="control-group">
                             <label for="font-size">
@@ -294,7 +294,7 @@
                             </label>
                             <input type="range" id="font-size" min="1" max="10" step="0.1" value="2" aria-label="Font size">
                         </div>
-                        
+
                         <div class="control-group">
                             <label for="font-position">
                                 <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -311,13 +311,14 @@
                                 <option value="top-left">左上</option>
                                 <option value="top-right">右上</option>
                                 <option value="bottom-left">左下</option>
+                                <option value="bottom-center">底部居中</option>
                                 <option value="bottom-right">右下</option>
                                 <option value="center">中心</option>
                             </select>
                         </div>
                     </div>
                 </section>
-                
+
                 <section class="info-section">
                     <h3 class="section-title">
                         <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -341,7 +342,7 @@
                         </label>
                         <input type="text" id="copyright" placeholder="版权信息" aria-label="Copyright information">
                     </div>
-                    
+
                     <div class="control-group">
                         <label for="notes">
                             <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -355,7 +356,7 @@
                         </label>
                         <textarea id="notes" placeholder="添加注释" aria-label="Notes" style="min-height: 60px;"></textarea>
                     </div>
-                    
+
                     <div class="control-group">
                         <label for="display-mode">
                             <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -369,6 +370,53 @@
                             <option value="full">完整模式</option>
                             <option value="simple">简洁模式</option>
                         </select>
+                    </div>
+                </section>
+
+                <section class="info-section template-section">
+                    <h3 class="section-title">
+                        <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                            <polyline points="14,2 14,8 20,8"/>
+                        </svg>
+                        <span data-i18n="templateTitle">模板管理</span>
+                    </h3>
+
+                    <!-- 内置模板 -->
+                    <div class="control-group">
+                        <label for="built-in-templates" data-i18n="builtInTemplates">内置模板</label>
+                        <select id="built-in-templates" aria-label="Built-in templates" style="margin-bottom: var(--spacing-xs);">
+                            <option value="" data-i18n="selectTemplate">选择模板...</option>
+                        </select>
+                    </div>
+                    <button id="apply-built-in-btn" class="btn btn-secondary" style="width: 100%; margin-bottom: var(--spacing-md);" data-i18n="applyTemplate">应用</button>
+
+                    <!-- 用户模板 -->
+                    <div class="control-group">
+                        <label for="user-templates" data-i18n="userTemplates">我的模板</label>
+                        <select id="user-templates" aria-label="User templates" style="margin-bottom: var(--spacing-xs);">
+                            <option value="" data-i18n="selectTemplate">选择模板...</option>
+                        </select>
+                    </div>
+                    <button id="apply-user-btn" class="btn btn-secondary" style="width: 100%; margin-bottom: var(--spacing-md);" data-i18n="applyTemplate">应用</button>
+
+                    <!-- 模板操作 -->
+                    <div class="template-actions">
+                        <button id="save-template-btn" class="btn btn-primary" data-i18n="saveAsTemplate">
+                            <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+                                <polyline points="17,21 17,13 7,13 7,21"/>
+                                <polyline points="7,3 7,8 15,8"/>
+                            </svg>
+                            保存为模板
+                        </button>
+                        <button id="manage-templates-btn" class="btn btn-secondary" data-i18n="manageTemplates">
+                            <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="3"/>
+                                <path d="M12 1v6m0 6v6M5.64 5.64l4.24 4.24m6.36 0l4.24-4.24m0 12.72l-4.24-4.24m-6.36 0l-4.24 4.24"/>
+                            </svg>
+                            管理模板
+                        </button>
                     </div>
                 </section>
             </aside>
@@ -390,6 +438,45 @@
             </div>
         </div>
     </div>
+
+    <!-- 模板管理对话框 -->
+    <div id="template-manager-overlay" class="dialog-overlay" style="display: none;">
+        <div class="dialog-box template-manager-dialog">
+            <div class="dialog-header">
+                <h3 data-i18n="manageTemplates">管理模板</h3>
+                <button id="close-template-manager" class="close-btn" aria-label="Close">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="dialog-content template-manager-content">
+                <div id="template-list"></div>
+            </div>
+            <div class="dialog-footer template-manager-footer">
+                <button id="import-template-btn" class="btn btn-secondary" data-i18n="importTemplate">
+                    <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                        <polyline points="7,10 12,15 17,10"/>
+                        <line x1="12" y1="15" x2="12" y2="3"/>
+                    </svg>
+                    导入模板
+                </button>
+                <button id="export-all-templates-btn" class="btn btn-secondary" data-i18n="exportAllTemplates">
+                    <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                        <polyline points="17,8 12,3 7,8"/>
+                        <line x1="12" y1="3" x2="12" y2="15"/>
+                    </svg>
+                    导出全部
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 隐藏的文件输入（用于导入模板） -->
+    <input type="file" id="template-file-input" accept=".json" style="display: none;">
 
     <!-- 外部JavaScript文件 -->
     <script type="module" src="./app.js"></script>

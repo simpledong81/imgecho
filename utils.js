@@ -114,6 +114,10 @@ export function calculateTextPosition(fontPosition, margin, maxLineWidth, totalT
             startX = margin;
             startY = canvas.height - margin - totalTextHeight;
             break;
+        case 'bottom-center':
+            startX = canvas.width / 2;
+            startY = canvas.height - margin - totalTextHeight;
+            break;
         case 'bottom-right':
             startX = canvas.width - margin;
             startY = canvas.height - margin - totalTextHeight;

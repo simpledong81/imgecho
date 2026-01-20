@@ -41,7 +41,7 @@ export class MetadataRenderer {
         
         // 根据位置设置文本对齐方式
         const fontPosition = document.getElementById('font-position').value;
-        ctx.textAlign = fontPosition === 'center' ? 'center' : (fontPosition.includes('right') ? 'right' : 'left');
+        ctx.textAlign = (fontPosition === 'center' || fontPosition === 'bottom-center') ? 'center' : (fontPosition.includes('right') ? 'right' : 'left');
         ctx.textBaseline = fontPosition.includes('bottom') ? 'bottom' : 'top';
         
         // 设置阴影效果

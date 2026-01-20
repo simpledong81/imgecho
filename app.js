@@ -14,6 +14,8 @@ import { BatchProcessor } from './batchProcessor.js';
 import { BatchExporter } from './batchExporter.js';
 import { BatchUI } from './batchUI.js';
 import { Dialog } from './dialog.js';
+import { TemplateManager } from './templateManager.js';
+import { TemplateUI } from './templateUI.js';
 
 /**
  * 主应用类
@@ -32,6 +34,10 @@ export class ImgEchoApp {
             this.languageManager
         );
         this.batchUI = new BatchUI(this.batchProcessor, this.languageManager);
+
+        // 模板管理模块
+        this.templateManager = new TemplateManager();
+        this.templateUI = new TemplateUI(this.templateManager, this.languageManager);
     }
 
     /**
@@ -49,6 +55,9 @@ export class ImgEchoApp {
 
         // 初始化语言管理器后更新界面
         this.languageManager.updateUI();
+
+        // 初始化模板选择器
+        this.templateUI.initTemplateSelectors();
 
         // 加载示例图片
         this.loadSampleImage();
@@ -131,6 +140,9 @@ export class ImgEchoApp {
 
         // 批量模式事件监听
         this.setupBatchEventListeners();
+
+        // 模板系统事件监听
+        this.setupTemplateEventListeners();
     }
 
     /**
@@ -191,6 +203,60 @@ export class ImgEchoApp {
             this.scheduleRefresh();
             console.log(`已还原图片 ${imageItem.name} 的表单数据`);
         });
+    }
+
+    /**
+     * 设置模板系统事件监听器
+     */
+    setupTemplateEventListeners() {
+        // 监听应用模板事件
+        document.addEventListener('apply-template', (e) => {
+            this.applyTemplateSettings(e.detail.settings);
+        });
+
+        // 监听获取当前设置事件（供模板保存使用）
+        document.addEventListener('get-current-settings', () => {
+            window.currentSettings = this.collectFormData();
+        });
+    }
+
+    /**
+     * 应用模板设置到表单
+     * @param {Object} settings - 模板设置
+     */
+    applyTemplateSettings(settings) {
+        // 应用字体设置
+        if (settings.fontFamily) {
+            document.getElementById('font-family').value = settings.fontFamily;
+        }
+        if (settings.fontWeight) {
+            document.getElementById('font-weight').value = settings.fontWeight;
+        }
+        if (settings.fontSize) {
+            const fontSizeInput = document.getElementById('font-size');
+            const fontSizeValue = document.getElementById('font-size-value');
+            if (fontSizeInput) fontSizeInput.value = settings.fontSize;
+            if (fontSizeValue) fontSizeValue.textContent = parseFloat(settings.fontSize).toFixed(1);
+        }
+        if (settings.fontPosition) {
+            document.getElementById('font-position').value = settings.fontPosition;
+        }
+        if (settings.displayMode) {
+            document.getElementById('display-mode').value = settings.displayMode;
+        }
+
+        // 应用模糊度
+        if (settings.blurValue !== undefined) {
+            const blurSlider = document.getElementById('blur-slider');
+            const blurValue = document.getElementById('blur-value');
+            if (blurSlider) blurSlider.value = settings.blurValue;
+            if (blurValue) blurValue.textContent = parseFloat(settings.blurValue).toFixed(1);
+        }
+
+        // 刷新画布
+        this.scheduleRefresh();
+
+        console.log('已应用模板设置:', settings);
     }
 
     /**

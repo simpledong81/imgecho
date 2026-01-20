@@ -457,32 +457,32 @@ body {
     body {
         padding: var(--spacing-sm);
     }
-    
+
     .main-content {
         grid-template-columns: 1fr;
         gap: var(--spacing-md);
     }
-    
+
     .header-content {
         flex-direction: column;
         align-items: flex-start;
         gap: var(--spacing-sm);
     }
-    
+
     .control-row {
         flex-direction: column;
         gap: var(--spacing-xs);
     }
-    
+
     .info-panel {
         max-height: none;
         overflow-y: visible;
     }
-    
+
     .image-section {
         min-height: 300px;
     }
-    
+
     .canvas-container {
         min-height: 300px;
     }
@@ -492,11 +492,11 @@ body {
     .app-title h1 {
         font-size: 1.5rem;
     }
-    
+
     .export-controls {
         flex-direction: column;
     }
-    
+
     .btn {
         min-width: auto;
     }
@@ -915,4 +915,230 @@ body {
 
 .dialog-footer .btn {
     min-width: 80px;
+}
+
+/* ==================== 模板管理相关样式 ==================== */
+
+/* 模板section */
+.template-section {
+    margin-top: var(--spacing-md);
+}
+
+.template-actions {
+    display: flex;
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-sm);
+}
+
+.template-actions .btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-xs);
+}
+
+/* 模板管理器对话框 */
+.template-manager-dialog {
+    min-width: 600px;
+    max-width: 800px;
+    max-height: 80vh;
+}
+
+.template-manager-dialog .dialog-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.template-manager-dialog .close-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: var(--spacing-xs);
+    color: var(--text-secondary);
+    transition: color 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.template-manager-dialog .close-btn:hover {
+    color: var(--text-primary);
+}
+
+.template-manager-content {
+    max-height: 50vh;
+    overflow-y: auto;
+}
+
+.template-manager-footer {
+    justify-content: space-between;
+}
+
+.template-manager-footer .btn {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+}
+
+/* 模板列表 */
+#template-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.empty-state {
+    text-align: center;
+    padding: var(--spacing-xl);
+    color: var(--text-secondary);
+}
+
+.empty-state p {
+    margin: var(--spacing-sm) 0;
+}
+
+.empty-state-hint {
+    font-size: 0.9rem;
+    color: var(--text-tertiary);
+}
+
+/* 模板项 */
+.template-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--spacing-md);
+    background: var(--background);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    transition: all 0.2s;
+}
+
+.template-item:hover {
+    border-color: var(--primary-color);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.template-item-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.template-item-name {
+    margin: 0 0 var(--spacing-xs) 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.template-item-description {
+    margin: 0 0 var(--spacing-xs) 0;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.template-item-date {
+    margin: 0;
+    font-size: 0.8rem;
+    color: var(--text-tertiary);
+}
+
+.template-item-actions {
+    display: flex;
+    gap: var(--spacing-xs);
+    margin-left: var(--spacing-md);
+}
+
+.template-item-actions .btn-icon {
+    padding: var(--spacing-xs);
+    color: var(--text-secondary);
+    transition: color 0.2s;
+}
+
+.template-item-actions .edit-btn:hover {
+    color: #2196F3;
+}
+
+.template-item-actions .export-btn:hover {
+    color: #4CAF50;
+}
+
+.template-item-actions .delete-btn:hover {
+    color: #f44336;
+}
+
+/* 保存模板表单 */
+.save-template-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.save-template-form .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+.save-template-form label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+.save-template-form input,
+.save-template-form textarea {
+    width: 100%;
+    padding: var(--spacing-sm);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    background: var(--background);
+    color: var(--text-primary);
+    font-family: inherit;
+    font-size: 0.95rem;
+    transition: border-color 0.2s;
+}
+
+.save-template-form input:focus,
+.save-template-form textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+.save-template-form textarea {
+    resize: vertical;
+    min-height: 60px;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .template-manager-dialog {
+        min-width: 90vw;
+        max-width: 95vw;
+    }
+
+    .template-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .template-item-actions {
+        margin-left: 0;
+        margin-top: var(--spacing-sm);
+        width: 100%;
+        justify-content: flex-end;
+    }
+
+    .template-actions {
+        flex-direction: column;
+    }
+
+    .template-actions .btn {
+        width: 100%;
+    }
 }
