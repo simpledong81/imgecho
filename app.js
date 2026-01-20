@@ -312,7 +312,7 @@ export class ImgEchoApp {
         if (metadata.notes !== undefined) document.getElementById('notes').value = metadata.notes || '';
 
         // 填充字体设置
-        if (metadata.fontFamily !== undefined) document.getElementById('font-family').value = metadata.fontFamily || 'Arial';
+        if (metadata.fontFamily !== undefined) document.getElementById('font-family').value = metadata.fontFamily || "Arial, 'Microsoft YaHei', 微软雅黑, sans-serif";
         if (metadata.fontWeight !== undefined) document.getElementById('font-weight').value = metadata.fontWeight || 'normal';
         if (metadata.fontSize !== undefined) {
             const fontSizeInput = document.getElementById('font-size');
