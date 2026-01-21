@@ -19,6 +19,7 @@ import { TemplateUI } from './templateUI.js';
 import { LogoManager } from './logoManager.js';
 import { LogoUI } from './logoUI.js';
 import { HistoryManager } from './historyManager.js';
+import { CropRotateManager } from './cropRotateManager.js';
 
 /**
  * 主应用类
@@ -48,6 +49,9 @@ export class ImgEchoApp {
 
         // 历史记录管理模块
         this.historyManager = new HistoryManager(50);
+
+        // 裁剪/旋转管理模块
+        this.cropRotateManager = new CropRotateManager(this.imageProcessor);
     }
 
     /**
@@ -201,6 +205,9 @@ export class ImgEchoApp {
 
         // 历史记录系统事件监听
         this.setupHistoryListeners();
+
+        // 裁剪/旋转系统事件监听
+        this.setupCropRotateListeners();
     }
 
     /**
@@ -328,6 +335,373 @@ export class ImgEchoApp {
 
         // 键盘快捷键
         this.setupKeyboardShortcuts();
+    }
+
+    /**
+     * 设置裁剪/旋转系统事件监听器
+     */
+    setupCropRotateListeners() {
+        // 裁剪按钮
+        const cropBtn = document.getElementById('crop-btn');
+        if (cropBtn) {
+            cropBtn.addEventListener('click', () => {
+                this.handleCropClick();
+            });
+        }
+
+        // 旋转按钮
+        const rotateLeftBtn = document.getElementById('rotate-left-btn');
+        const rotateRightBtn = document.getElementById('rotate-right-btn');
+
+        if (rotateLeftBtn) {
+            rotateLeftBtn.addEventListener('click', () => {
+                this.cropRotateManager.rotateImage(-90);
+                // 立即确认变换
+                this.cropRotateManager.confirmTransformations();
+            });
+        }
+
+        if (rotateRightBtn) {
+            rotateRightBtn.addEventListener('click', () => {
+                this.cropRotateManager.rotateImage(90);
+                // 立即确认变换
+                this.cropRotateManager.confirmTransformations();
+            });
+        }
+
+        // 翻转按钮
+        const flipHorizontalBtn = document.getElementById('flip-horizontal-btn');
+        const flipVerticalBtn = document.getElementById('flip-vertical-btn');
+
+        if (flipHorizontalBtn) {
+            flipHorizontalBtn.addEventListener('click', () => {
+                this.cropRotateManager.flipImage('horizontal');
+                // 立即确认变换
+                this.cropRotateManager.confirmTransformations();
+            });
+        }
+
+        if (flipVerticalBtn) {
+            flipVerticalBtn.addEventListener('click', () => {
+                this.cropRotateManager.flipImage('vertical');
+                // 立即确认变换
+                this.cropRotateManager.confirmTransformations();
+            });
+        }
+
+        // 还原按钮
+        const resetTransformBtn = document.getElementById('reset-transform-btn');
+        if (resetTransformBtn) {
+            resetTransformBtn.addEventListener('click', () => {
+                this.cropRotateManager.resetTransform();
+                this.scheduleRefresh();
+            });
+        }
+
+        // 裁剪比例按钮
+        const cropFree = document.getElementById('crop-free');
+        const crop11 = document.getElementById('crop-1-1');
+        const crop43 = document.getElementById('crop-4-3');
+        const crop169 = document.getElementById('crop-16-9');
+        const crop32 = document.getElementById('crop-3-2');
+
+        const cropRatioButtons = [cropFree, crop11, crop43, crop169, crop32];
+
+        cropRatioButtons.forEach((btn) => {
+            if (btn) {
+                btn.addEventListener('click', (e) => {
+                    // 移除所有按钮的 active 类
+                    cropRatioButtons.forEach((b) => b?.classList.remove('active'));
+
+                    // 添加当前按钮的 active 类
+                    e.target.classList.add('active');
+
+                    // 设置裁剪比例
+                    const ratio = e.target.dataset.ratio ? parseFloat(e.target.dataset.ratio) : null;
+                    this.cropRotateManager.setAspectRatio(ratio);
+                });
+            }
+        });
+
+        // 裁剪工具栏按钮
+        const cropApply = document.getElementById('crop-apply');
+        const cropCancel = document.getElementById('crop-cancel');
+
+        if (cropApply) {
+            cropApply.addEventListener('click', () => {
+                this.applyCrop();
+            });
+        }
+
+        if (cropCancel) {
+            cropCancel.addEventListener('click', () => {
+                this.cancelCrop();
+            });
+        }
+
+        // 监听裁剪应用和变换事件
+        document.addEventListener('crop-applied', () => {
+            this.saveHistorySnapshot('crop', '应用裁剪');
+            this.scheduleRefresh();
+        });
+
+        document.addEventListener('transformation-applied', () => {
+            this.scheduleRefresh();
+        });
+
+        document.addEventListener('transformation-confirmed', () => {
+            this.saveHistorySnapshot('rotate-flip', '应用旋转/翻转');
+            this.scheduleRefresh();
+        });
+
+        // 画布交互（裁剪模式）
+        this.setupCropCanvasInteraction();
+    }
+
+    /**
+     * 处理裁剪按钮点击
+     */
+    handleCropClick() {
+        if (this.cropRotateManager.isCropMode) {
+            // 已在裁剪模式，退出
+            this.cropRotateManager.exitCropMode();
+        } else {
+            // 进入裁剪模式
+            const success = this.cropRotateManager.enterCropMode();
+            if (!success) {
+                Dialog.alert(
+                    this.languageManager.get('pleaseUploadImage') || '请先上传图片',
+                    this.languageManager.get('tip') || '提示'
+                );
+            }
+        }
+    }
+
+    /**
+     * 应用裁剪
+     */
+    applyCrop() {
+        const success = this.cropRotateManager.applyCrop();
+        if (success) {
+            // 裁剪成功，自动触发 crop-applied 事件
+        }
+    }
+
+    /**
+     * 取消裁剪
+     */
+    cancelCrop() {
+        this.cropRotateManager.exitCropMode();
+        this.scheduleRefresh();
+    }
+
+    /**
+     * 设置裁剪画布交互
+     */
+    setupCropCanvasInteraction() {
+        const canvas = this.imageProcessor.getCanvas();
+        const canvasContainer = document.getElementById('drop-zone');
+
+        // 禁用canvas的拖拽属性
+        canvas.draggable = false;
+        canvas.setAttribute('draggable', 'false');
+
+        // 阻止canvas的默认拖拽行为
+        canvas.addEventListener('dragstart', (e) => {
+            e.preventDefault();
+            return false;
+        }, { passive: false });
+
+        // 阻止drag事件
+        canvas.addEventListener('drag', (e) => {
+            e.preventDefault();
+            return false;
+        }, { passive: false });
+
+        // 阻止右键菜单
+        canvas.addEventListener('contextmenu', (e) => {
+            if (this.cropRotateManager.isCropMode) {
+                e.preventDefault();
+            }
+        });
+
+        // 鼠标按下
+        canvas.addEventListener('mousedown', (e) => {
+            console.log('Canvas mousedown事件触发, isCropMode:', this.cropRotateManager.isCropMode);
+            if (!this.cropRotateManager.isCropMode) return;
+
+            e.preventDefault();
+            e.stopPropagation();
+            e.stopImmediatePropagation();
+
+            const rect = canvas.getBoundingClientRect();
+            // 获取显示坐标
+            const displayX = e.clientX - rect.left;
+            const displayY = e.clientY - rect.top;
+
+            // 转换为canvas实际像素坐标
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            const x = displayX * scaleX;
+            const y = displayY * scaleY;
+
+            console.log('鼠标位置 - 显示:', displayX, displayY, '实际:', x, y, '裁剪框:', this.cropRotateManager.cropBox);
+
+            // 检查是否点击了调整手柄
+            const handle = this.cropRotateManager.getHandleAtPoint(x, y);
+            console.log('检测到手柄:', handle);
+            if (handle) {
+                this.cropRotateManager.isResizing = true;
+                this.cropRotateManager.resizeHandle = handle;
+                canvasContainer.classList.add('resizing');
+                console.log('开始调整裁剪框大小，手柄:', handle);
+            } else if (this.cropRotateManager.isPointInCropBox(x, y)) {
+                // 点击在裁剪框内，开始拖动
+                this.cropRotateManager.isDragging = true;
+                this.cropRotateManager.dragStartX = x - this.cropRotateManager.cropBox.x;
+                this.cropRotateManager.dragStartY = y - this.cropRotateManager.cropBox.y;
+                canvasContainer.classList.add('dragging');
+                console.log('开始拖动裁剪框');
+            }
+
+            return false;
+        }, true);
+
+        // 鼠标移动
+        canvas.addEventListener('mousemove', (e) => {
+            if (!this.cropRotateManager.isCropMode) return;
+
+            e.preventDefault();
+            e.stopPropagation();
+
+            const rect = canvas.getBoundingClientRect();
+            // 获取显示坐标
+            const displayX = e.clientX - rect.left;
+            const displayY = e.clientY - rect.top;
+
+            // 转换为canvas实际像素坐标
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            const x = displayX * scaleX;
+            const y = displayY * scaleY;
+
+            if (this.cropRotateManager.isDragging) {
+                // 拖动裁剪框
+                this.cropRotateManager.cropBox.x = x - this.cropRotateManager.dragStartX;
+                this.cropRotateManager.cropBox.y = y - this.cropRotateManager.dragStartY;
+                this.cropRotateManager.constrainCropBox();
+                this.cropRotateManager.drawCropOverlay();
+            } else if (this.cropRotateManager.isResizing) {
+                // 调整裁剪框大小
+                this.resizeCropBox(x, y);
+            }
+
+            return false;
+        }, true);
+
+        // 鼠标松开
+        canvas.addEventListener('mouseup', (e) => {
+            if (!this.cropRotateManager.isCropMode) return;
+
+            e.preventDefault();
+            e.stopPropagation();
+
+            this.cropRotateManager.isDragging = false;
+            this.cropRotateManager.isResizing = false;
+            this.cropRotateManager.resizeHandle = null;
+            canvasContainer.classList.remove('dragging', 'resizing');
+
+            return false;
+        }, true);
+
+        // 鼠标离开画布
+        canvas.addEventListener('mouseleave', () => {
+            if (!this.cropRotateManager.isCropMode) return;
+
+            this.cropRotateManager.isDragging = false;
+            this.cropRotateManager.isResizing = false;
+            this.cropRotateManager.resizeHandle = null;
+            canvasContainer.classList.remove('dragging', 'resizing');
+        });
+    }
+
+    /**
+     * 调整裁剪框大小
+     */
+    resizeCropBox(mouseX, mouseY) {
+        const cropBox = this.cropRotateManager.cropBox;
+        const handle = this.cropRotateManager.resizeHandle;
+        const aspectRatio = this.cropRotateManager.aspectRatio;
+
+        const oldX = cropBox.x;
+        const oldY = cropBox.y;
+        const oldWidth = cropBox.width;
+        const oldHeight = cropBox.height;
+
+        // 根据不同的手柄调整裁剪框
+        switch (handle) {
+            case 'nw':
+                cropBox.width = oldX + oldWidth - mouseX;
+                cropBox.height = oldY + oldHeight - mouseY;
+                cropBox.x = mouseX;
+                cropBox.y = mouseY;
+                break;
+            case 'n':
+                cropBox.height = oldY + oldHeight - mouseY;
+                cropBox.y = mouseY;
+                break;
+            case 'ne':
+                cropBox.width = mouseX - oldX;
+                cropBox.height = oldY + oldHeight - mouseY;
+                cropBox.y = mouseY;
+                break;
+            case 'e':
+                cropBox.width = mouseX - oldX;
+                break;
+            case 'se':
+                cropBox.width = mouseX - oldX;
+                cropBox.height = mouseY - oldY;
+                break;
+            case 's':
+                cropBox.height = mouseY - oldY;
+                break;
+            case 'sw':
+                cropBox.width = oldX + oldWidth - mouseX;
+                cropBox.height = mouseY - oldY;
+                cropBox.x = mouseX;
+                break;
+            case 'w':
+                cropBox.width = oldX + oldWidth - mouseX;
+                cropBox.x = mouseX;
+                break;
+        }
+
+        // 如果有固定比例，调整高度或宽度
+        if (aspectRatio) {
+            if (['e', 'w', 'ne', 'nw', 'se', 'sw'].includes(handle)) {
+                cropBox.height = cropBox.width / aspectRatio;
+                if (['nw', 'ne'].includes(handle)) {
+                    cropBox.y = oldY + oldHeight - cropBox.height;
+                }
+            }
+        }
+
+        // 确保裁剪框在画布内
+        this.cropRotateManager.constrainCropBox();
+
+        // 重绘
+        this.cropRotateManager.drawCropOverlay();
+    }
+
+    /**
+     * 保存历史快照的辅助方法
+     */
+    saveHistorySnapshot(operation, label) {
+        if (this.imageProcessor.getOriginalImage()) {
+            const state = this.collectHistoryState();
+            const canvas = this.imageProcessor.getCanvas();
+            this.historyManager.saveSnapshot(state, operation, label, canvas);
+        }
     }
 
     /**
@@ -870,6 +1244,7 @@ export class ImgEchoApp {
 
         // 保存原始图片到 imageProcessor（重要！）
         this.imageProcessor.originalImage = imageItem.originalImage;
+        this.imageProcessor.pristineOriginalImage = imageItem.originalImage;
 
         // 加载图片到主画布
         this.imageProcessor.displayImageOnCanvas(imageItem.originalImage);
@@ -1035,6 +1410,7 @@ export class ImgEchoApp {
                 if (firstImage && firstImage.originalImage) {
                     // 保存原始图片到 imageProcessor（重要！）
                     this.imageProcessor.originalImage = firstImage.originalImage;
+                    this.imageProcessor.pristineOriginalImage = firstImage.originalImage;
 
                     // 显示图片
                     this.imageProcessor.displayImageOnCanvas(firstImage.originalImage);

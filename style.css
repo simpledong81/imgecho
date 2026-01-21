@@ -200,6 +200,15 @@ body {
     display: block;
     opacity: 0;
     transition: opacity 0.3s ease;
+    -webkit-user-drag: none;
+    -khtml-user-drag: none;
+    -moz-user-drag: none;
+    -o-user-drag: none;
+    user-drag: none;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
 }
 
 .canvas-container.has-image {
@@ -1690,5 +1699,134 @@ body {
     .history-thumbnail {
         width: 60px;
         height: 60px;
+    }
+}
+
+/* ===== 裁剪/旋转功能样式 ===== */
+
+/* 裁剪/旋转控件 */
+.crop-rotate-controls {
+    display: flex;
+    gap: var(--spacing-sm);
+    flex-wrap: wrap;
+}
+
+.crop-rotate-controls .btn {
+    flex: 1;
+    min-width: 100px;
+    font-size: var(--font-size-sm);
+    padding: 8px 12px;
+}
+
+/* 裁剪工具栏覆盖层 */
+.crop-toolbar {
+    position: fixed;
+    bottom: var(--spacing-lg);
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    background: rgba(0, 0, 0, 0.9);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-md);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
+}
+
+.crop-toolbar-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+    align-items: center;
+}
+
+.crop-ratio-buttons {
+    display: flex;
+    gap: var(--spacing-sm);
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.crop-ratio-buttons .btn {
+    min-width: 60px;
+    padding: 8px 16px;
+    font-size: var(--font-size-sm);
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.crop-ratio-buttons .btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-1px);
+}
+
+.crop-ratio-buttons .btn.active {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    font-weight: var(--font-weight-bold);
+}
+
+.crop-actions {
+    display: flex;
+    gap: var(--spacing-sm);
+}
+
+.crop-actions .btn {
+    min-width: 100px;
+}
+
+.crop-actions .btn-primary {
+    background: var(--primary-color);
+    color: white;
+}
+
+.crop-actions .btn-secondary {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.crop-actions .btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* 裁剪画布样式 */
+.canvas-container.crop-mode {
+    cursor: crosshair;
+}
+
+.canvas-container.crop-mode.dragging {
+    cursor: move;
+}
+
+.canvas-container.crop-mode.resizing {
+    cursor: nwse-resize;
+}
+
+/* 响应式裁剪工具栏 */
+@media (max-width: 768px) {
+    .crop-toolbar {
+        left: var(--spacing-md);
+        right: var(--spacing-md);
+        bottom: var(--spacing-md);
+        transform: none;
+        width: auto;
+    }
+
+    .crop-ratio-buttons {
+        width: 100%;
+    }
+
+    .crop-ratio-buttons .btn {
+        flex: 1;
+        min-width: 50px;
+    }
+
+    .crop-rotate-controls {
+        flex-direction: column;
+    }
+
+    .crop-rotate-controls .btn {
+        width: 100%;
     }
 }

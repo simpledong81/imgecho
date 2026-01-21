@@ -191,7 +191,19 @@ const locales = {
         operationBlurChange: 'Blur Effect',
         operationLogoChange: 'Logo Settings',
         operationTemplateApplied: 'Template Applied',
-        operationBatchSettingChange: 'Batch Settings'
+        operationBatchSettingChange: 'Batch Settings',
+
+        // 裁剪和旋转
+        crop: 'Crop',
+        rotateLeft: 'Rotate Left 90°',
+        rotateRight: 'Rotate Right 90°',
+        flipHorizontal: 'Flip Horizontal',
+        flipVertical: 'Flip Vertical',
+        resetTransform: 'Reset Transform',
+        cropFree: 'Free',
+        apply: 'Apply',
+        pleaseUploadImage: 'Please upload an image first',
+        tip: 'Tip'
     },
 
     zh: {
@@ -385,7 +397,19 @@ const locales = {
         operationBlurChange: '模糊效果',
         operationLogoChange: 'Logo 设置',
         operationTemplateApplied: '应用模板',
-        operationBatchSettingChange: '批量设置'
+        operationBatchSettingChange: '批量设置',
+
+        // 裁剪和旋转
+        crop: '裁剪',
+        rotateLeft: '左旋90°',
+        rotateRight: '右旋90°',
+        flipHorizontal: '水平翻转',
+        flipVertical: '垂直翻转',
+        resetTransform: '还原',
+        cropFree: '自由',
+        apply: '应用',
+        pleaseUploadImage: '请先上传图片',
+        tip: '提示'
     }
 };
 
@@ -601,6 +625,66 @@ class LanguageManager {
             const svg = manageTemplatesBtn.querySelector('svg');
             manageTemplatesBtn.textContent = this.get('manageTemplates');
             if (svg) manageTemplatesBtn.insertBefore(svg, manageTemplatesBtn.firstChild);
+        }
+
+        // 更新裁剪/旋转按钮
+        const cropBtn = document.getElementById('crop-btn');
+        const rotateLeftBtn = document.getElementById('rotate-left-btn');
+        const rotateRightBtn = document.getElementById('rotate-right-btn');
+        const flipHorizontalBtn = document.getElementById('flip-horizontal-btn');
+        const flipVerticalBtn = document.getElementById('flip-vertical-btn');
+        const resetTransformBtn = document.getElementById('reset-transform-btn');
+
+        if (cropBtn) {
+            const svg = cropBtn.querySelector('svg');
+            cropBtn.textContent = this.get('crop');
+            if (svg) cropBtn.insertBefore(svg, cropBtn.firstChild);
+        }
+        if (rotateLeftBtn) {
+            const svg = rotateLeftBtn.querySelector('svg');
+            rotateLeftBtn.textContent = this.get('rotateLeft');
+            if (svg) rotateLeftBtn.insertBefore(svg, rotateLeftBtn.firstChild);
+        }
+        if (rotateRightBtn) {
+            const svg = rotateRightBtn.querySelector('svg');
+            rotateRightBtn.textContent = this.get('rotateRight');
+            if (svg) rotateRightBtn.insertBefore(svg, rotateRightBtn.firstChild);
+        }
+        if (flipHorizontalBtn) {
+            const svg = flipHorizontalBtn.querySelector('svg');
+            flipHorizontalBtn.textContent = this.get('flipHorizontal');
+            if (svg) flipHorizontalBtn.insertBefore(svg, flipHorizontalBtn.firstChild);
+        }
+        if (flipVerticalBtn) {
+            const svg = flipVerticalBtn.querySelector('svg');
+            flipVerticalBtn.textContent = this.get('flipVertical');
+            if (svg) flipVerticalBtn.insertBefore(svg, flipVerticalBtn.firstChild);
+        }
+        if (resetTransformBtn) {
+            const svg = resetTransformBtn.querySelector('svg');
+            resetTransformBtn.textContent = this.get('resetTransform');
+            if (svg) resetTransformBtn.insertBefore(svg, resetTransformBtn.firstChild);
+        }
+
+        // 更新撤销/重做/历史记录按钮
+        const undoBtn = document.getElementById('undo-btn');
+        const redoBtn = document.getElementById('redo-btn');
+        const historyPanelBtn = document.getElementById('history-panel-btn');
+
+        if (undoBtn) {
+            const svg = undoBtn.querySelector('svg');
+            undoBtn.textContent = this.get('undo');
+            if (svg) undoBtn.insertBefore(svg, undoBtn.firstChild);
+        }
+        if (redoBtn) {
+            const svg = redoBtn.querySelector('svg');
+            redoBtn.textContent = this.get('redo');
+            if (svg) redoBtn.insertBefore(svg, redoBtn.firstChild);
+        }
+        if (historyPanelBtn) {
+            const svg = historyPanelBtn.querySelector('svg');
+            historyPanelBtn.textContent = this.get('historyPanel');
+            if (svg) historyPanelBtn.insertBefore(svg, historyPanelBtn.firstChild);
         }
     }
 

@@ -10,11 +10,16 @@ import { Dialog } from './dialog.js';
 export class ImageProcessor {
     constructor() {
         this.originalImage = null;
+        this.pristineOriginalImage = null; // 保存首次上传的原始图片，永不改变
         this.currentImage = null;
         this.canvas = document.getElementById('image-canvas');
         this.ctx = this.canvas.getContext('2d');
         this.needsRefresh = true;
         this.refreshTimeout = null;
+
+        // 存储dropZone点击处理器，以便在裁剪模式时禁用
+        this.dropZoneClickHandler = null;
+        this.dropZone = null;
     }
 
     /**
@@ -28,24 +33,24 @@ export class ImageProcessor {
      * 设置拖拽上传功能
      */
     setupDragAndDrop() {
-        const dropZone = document.getElementById('drop-zone');
-        
+        this.dropZone = document.getElementById('drop-zone');
+
         // 拖拽进入事件
-        dropZone.addEventListener('dragover', (e) => {
+        this.dropZone.addEventListener('dragover', (e) => {
             e.preventDefault();
-            dropZone.classList.add('drag-over');
+            this.dropZone.classList.add('drag-over');
         });
 
         // 拖拽离开事件
-        dropZone.addEventListener('dragleave', () => {
-            dropZone.classList.remove('drag-over');
+        this.dropZone.addEventListener('dragleave', () => {
+            this.dropZone.classList.remove('drag-over');
         });
 
         // 拖拽释放事件
-        dropZone.addEventListener('drop', (e) => {
+        this.dropZone.addEventListener('drop', (e) => {
             e.preventDefault();
-            dropZone.classList.remove('drag-over');
-            
+            this.dropZone.classList.remove('drag-over');
+
             // 获取拖拽的文件
             const files = e.dataTransfer.files;
             if (files.length > 0) {
@@ -53,10 +58,31 @@ export class ImageProcessor {
             }
         });
 
-        // 点击上传事件
-        dropZone.addEventListener('click', () => {
+        // 点击上传事件 - 存储处理器引用以便后续移除
+        this.dropZoneClickHandler = () => {
             document.getElementById('file-input').click();
-        });
+        };
+        this.dropZone.addEventListener('click', this.dropZoneClickHandler);
+    }
+
+    /**
+     * 禁用dropZone的点击上传功能（裁剪模式时使用）
+     */
+    disableDropZoneClick() {
+        if (this.dropZone && this.dropZoneClickHandler) {
+            this.dropZone.removeEventListener('click', this.dropZoneClickHandler);
+        }
+    }
+
+    /**
+     * 启用dropZone的点击上传功能
+     */
+    enableDropZoneClick() {
+        if (this.dropZone && this.dropZoneClickHandler) {
+            // 先移除再添加，避免重复绑定
+            this.dropZone.removeEventListener('click', this.dropZoneClickHandler);
+            this.dropZone.addEventListener('click', this.dropZoneClickHandler);
+        }
     }
 
     /**
@@ -81,6 +107,8 @@ export class ImageProcessor {
             img.onload = () => {
                 console.log('图片加载成功，尺寸:', img.naturalWidth, 'x', img.naturalHeight);
                 this.originalImage = img;
+                this.pristineOriginalImage = img; // 保存首次上传的原始图片
+                console.log('pristineOriginalImage已设置:', this.pristineOriginalImage ? '成功' : '失败');
                 this.displayImageOnCanvas(img);
                 this.updateCanvasContainer(true);
                 console.log('图片显示完成');
@@ -189,13 +217,37 @@ export class ImageProcessor {
     }
 
     /**
+     * 设置原始图片
+     * @param {Image} img - 图片对象
+     */
+    setOriginalImage(img) {
+        console.log('setOriginalImage被调用，图片尺寸:', img.naturalWidth, 'x', img.naturalHeight);
+        this.originalImage = img;
+
+        // 如果 pristineOriginalImage 还没有设置，也设置它
+        // 这确保第一次设置图片时会保存为 pristine 版本
+        if (!this.pristineOriginalImage) {
+            this.pristineOriginalImage = img;
+            console.log('pristineOriginalImage首次设置');
+        }
+    }
+
+    /**
+     * 获取首次上传的原始图片（从未被变换修改）
+     * @returns {Image|null}
+     */
+    getPristineOriginalImage() {
+        return this.pristineOriginalImage;
+    }
+
+    /**
      * 刷新调度函数 - 防抖处理
      * 优化性能，避免频繁刷新
      * @param {Function} callback - 刷新回调函数
      */
     scheduleRefresh(callback) {
         this.needsRefresh = true;
-        
+
         // 清除之前的定时器
         if (this.refreshTimeout) {
             clearTimeout(this.refreshTimeout);
@@ -229,12 +281,13 @@ export class ImageProcessor {
         const sampleImage = new Image();
         sampleImage.crossOrigin = 'anonymous';
         sampleImage.src = 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80';
-        
+
         sampleImage.onload = () => {
             this.originalImage = sampleImage;
+            this.pristineOriginalImage = sampleImage; // 保存首次加载的示例图片
             this.displayImageOnCanvas(sampleImage);
             this.updateCanvasContainer(true);
-            
+
             if (callback) {
                 callback();
             }

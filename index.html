@@ -105,6 +105,50 @@
                         </button>
                     </div>
 
+                    <!-- 裁剪/旋转控件 -->
+                    <div class="crop-rotate-controls" style="margin-top: 10px;">
+                        <button id="crop-btn" class="btn btn-secondary" aria-label="Crop" data-i18n="crop">
+                            <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M6.13 1L6 16a2 2 0 0 0 2 2h15"/>
+                                <path d="M1 6.13L16 6a2 2 0 0 1 2 2v15"/>
+                            </svg>
+                            裁剪
+                        </button>
+                        <button id="rotate-left-btn" class="btn btn-secondary" aria-label="Rotate left" data-i18n="rotateLeft">
+                            <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M2.5 2v6h6M2.66 15.57a10 10 0 1 0 .57-8.38"/>
+                            </svg>
+                            左旋90°
+                        </button>
+                        <button id="rotate-right-btn" class="btn btn-secondary" aria-label="Rotate right" data-i18n="rotateRight">
+                            <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38"/>
+                            </svg>
+                            右旋90°
+                        </button>
+                        <button id="flip-horizontal-btn" class="btn btn-secondary" aria-label="Flip horizontal" data-i18n="flipHorizontal">
+                            <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 3v18M8 7L4 12l4 5M16 7l4 5-4 5"/>
+                            </svg>
+                            水平翻转
+                        </button>
+                        <button id="flip-vertical-btn" class="btn btn-secondary" aria-label="Flip vertical" data-i18n="flipVertical">
+                            <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M3 12h18M7 8l5-4 5 4M7 16l5 4 5-4"/>
+                            </svg>
+                            垂直翻转
+                        </button>
+                        <button id="reset-transform-btn" class="btn btn-secondary" aria-label="Reset transform" data-i18n="resetTransform">
+                            <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/>
+                                <path d="M21 3v5h-5"/>
+                                <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/>
+                                <path d="M3 21v-5h5"/>
+                            </svg>
+                            还原
+                        </button>
+                    </div>
+
                     <!-- 撤销/重做控件 -->
                     <div class="undo-redo-controls" style="margin-top: 10px;">
                         <button id="undo-btn" class="btn btn-secondary" aria-label="Undo" data-i18n="undo" disabled>
@@ -733,6 +777,23 @@
                 <button class="btn btn-secondary" onclick="document.getElementById('history-panel-overlay').style.display='none'" data-i18n="close">
                     关闭
                 </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 裁剪工具栏 -->
+    <div id="crop-toolbar" class="crop-toolbar" style="display: none;">
+        <div class="crop-toolbar-content">
+            <div class="crop-ratio-buttons">
+                <button id="crop-free" class="btn btn-secondary active" data-i18n="cropFree">自由</button>
+                <button id="crop-1-1" class="btn btn-secondary" data-ratio="1">1:1</button>
+                <button id="crop-4-3" class="btn btn-secondary" data-ratio="1.333">4:3</button>
+                <button id="crop-16-9" class="btn btn-secondary" data-ratio="1.778">16:9</button>
+                <button id="crop-3-2" class="btn btn-secondary" data-ratio="1.5">3:2</button>
+            </div>
+            <div class="crop-actions">
+                <button id="crop-apply" class="btn btn-primary" data-i18n="apply">应用</button>
+                <button id="crop-cancel" class="btn btn-secondary" data-i18n="cancel">取消</button>
             </div>
         </div>
     </div>
