@@ -154,7 +154,7 @@
                             <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
                             <circle cx="12" cy="13" r="4"/>
                         </svg>
-                        基本信息
+                        <span data-i18n="basicInfo">基本信息</span>
                     </h3>
                     <div class="control-row">
                         <div class="control-group">
@@ -239,7 +239,7 @@
                             <path d="M15 15h5"/>
                             <path d="M15 11h5"/>
                         </svg>
-                        文字设置
+                        <span data-i18n="textSettings">文字设置</span>
                     </h3>
                     <div class="control-row">
                         <div class="control-group">
@@ -326,7 +326,7 @@
                             <line x1="12" y1="8" x2="12" y2="12"/>
                             <line x1="12" y1="16" x2="12.01" y2="16"/>
                         </svg>
-                        其他信息
+                        <span data-i18n="otherInfo">其他信息</span>
                     </h3>
                     <div class="control-group">
                         <label for="copyright">
@@ -419,6 +419,93 @@
                         </button>
                     </div>
                 </section>
+
+                <section class="info-section logo-section">
+                    <h3 class="section-title">
+                        <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                            <circle cx="8.5" cy="8.5" r="1.5"/>
+                            <polyline points="21,15 16,10 5,21"/>
+                        </svg>
+                        <span data-i18n="logoWatermark">Logo/水印</span>
+                    </h3>
+
+                    <!-- Logo 选择 -->
+                    <div class="control-group">
+                        <label for="logo-select" data-i18n="selectLogo">选择 Logo</label>
+                        <select id="logo-select" aria-label="Select logo">
+                            <option value="" data-i18n="noLogo">无 Logo</option>
+                        </select>
+                    </div>
+
+                    <!-- Logo 上传 -->
+                    <button id="upload-logo-btn" class="btn btn-secondary" style="width: 100%; margin-bottom: var(--spacing-md);" data-i18n="uploadLogo">
+                        <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="17,8 12,3 7,8"/>
+                            <line x1="12" y1="3" x2="12" y2="15"/>
+                        </svg>
+                        上传 Logo
+                    </button>
+
+                    <!-- Logo 控制 -->
+                    <div class="control-row">
+                        <div class="control-group">
+                            <label for="logo-position">
+                                <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r=".5"/>
+                                    <circle cx="19.5" cy="4.5" r=".5"/>
+                                    <circle cx="4.5" cy="19.5" r=".5"/>
+                                </svg>
+                                <span data-i18n="logoPosition">位置</span>
+                            </label>
+                            <select id="logo-position" aria-label="Logo position">
+                                <option value="top-left" data-i18n="positionTopLeft">左上</option>
+                                <option value="top-right" data-i18n="positionTopRight">右上</option>
+                                <option value="bottom-left" data-i18n="positionBottomLeft">左下</option>
+                                <option value="bottom-right" data-i18n="positionBottomRight" selected>右下</option>
+                                <option value="center" data-i18n="positionCenter">中心</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="logo-size">
+                            <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                            </svg>
+                            <span data-i18n="logoSize">大小</span>: <span id="logo-size-value">10</span>%
+                        </label>
+                        <input type="range" id="logo-size" min="5" max="30" value="10" step="1" aria-label="Logo size">
+                    </div>
+
+                    <div class="control-group">
+                        <label for="logo-opacity">
+                            <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <path d="M12 2v20"/>
+                            </svg>
+                            <span data-i18n="logoOpacity">透明度</span>: <span id="logo-opacity-value">100</span>%
+                        </label>
+                        <input type="range" id="logo-opacity" min="0" max="100" value="100" step="5" aria-label="Logo opacity">
+                    </div>
+
+                    <div class="control-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="logo-tiled" aria-label="Tiled watermark mode">
+                            <span data-i18n="logoTiled">平铺水印模式</span>
+                        </label>
+                    </div>
+
+                    <!-- Logo 管理 -->
+                    <button id="manage-logos-btn" class="btn btn-secondary" style="width: 100%;" data-i18n="manageLogos">
+                        <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="3"/>
+                            <path d="M12 1v6m0 6v6M5.64 5.64l4.24 4.24m6.36 0l4.24-4.24m0 12.72l-4.24-4.24m-6.36 0l-4.24 4.24"/>
+                        </svg>
+                        管理 Logo
+                    </button>
+                </section>
             </aside>
         </main>
     </div>
@@ -475,8 +562,27 @@
         </div>
     </div>
 
-    <!-- 隐藏的文件输入（用于导入模板） -->
+    <!-- Logo 管理对话框 -->
+    <div id="logo-manager-overlay" class="dialog-overlay" style="display: none;">
+        <div class="dialog-box logo-manager-dialog">
+            <div class="dialog-header">
+                <h3 data-i18n="manageLogos">管理 Logo</h3>
+                <button id="close-logo-manager" class="close-btn" aria-label="Close">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="dialog-content logo-manager-content">
+                <div id="logo-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 隐藏的文件输入 -->
     <input type="file" id="template-file-input" accept=".json" style="display: none;">
+    <input type="file" id="logo-file-input" accept="image/png,image/jpeg,image/jpg,image/gif,image/svg+xml,image/webp" style="display: none;">
 
     <!-- 外部JavaScript文件 -->
     <script type="module" src="./app.js"></script>

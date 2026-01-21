@@ -13,8 +13,9 @@ export class MetadataRenderer {
      * @param {ImageProcessor} imageProcessor - 图片处理器实例
      * @param {Object} languageManager - 语言管理器实例
      * @param {CanvasRenderingContext2D} overrideCtx - 可选的画布上下文（用于导出）
+     * @param {Object} logoManager - Logo 管理器实例（可选）
      */
-    static updateMetadataOverlay(imageProcessor, languageManager, overrideCtx = null) {
+    static updateMetadataOverlay(imageProcessor, languageManager, overrideCtx = null, logoManager = null) {
         const ctx = overrideCtx || imageProcessor.getContext();
         const canvas = imageProcessor.getCanvas();
         const originalImage = imageProcessor.getOriginalImage();
@@ -64,9 +65,34 @@ export class MetadataRenderer {
         
         // 如果没有内容需要显示，直接返回
         if (textLines.length === 0) return;
-        
+
         // 绘制文本
         this.drawTextLines(ctx, canvas, textLines, fontSize, lineHeight);
+
+        // 绘制 Logo（如果有）
+        if (logoManager && logoManager.getCurrentLogo()) {
+            this.renderLogo(ctx, canvas, logoManager);
+        }
+    }
+
+    /**
+     * 渲染 Logo
+     * @param {CanvasRenderingContext2D} ctx - 画布上下文
+     * @param {HTMLCanvasElement} canvas - 画布元素
+     * @param {Object} logoManager - Logo 管理器实例
+     */
+    static renderLogo(ctx, canvas, logoManager) {
+        const logoPosition = document.getElementById('logo-position')?.value || 'bottom-right';
+        const logoSize = parseFloat(document.getElementById('logo-size')?.value || 10);
+        const logoOpacity = parseFloat(document.getElementById('logo-opacity')?.value || 100) / 100;
+        const logoTiled = document.getElementById('logo-tiled')?.checked || false;
+
+        logoManager.renderLogo(ctx, canvas, {
+            position: logoPosition,
+            size: logoSize,
+            opacity: logoOpacity,
+            tiled: logoTiled,
+        });
     }
 
     /**

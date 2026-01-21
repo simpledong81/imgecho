@@ -29,6 +29,7 @@ export default [
                 clearTimeout: 'readonly',
                 EventTarget: 'readonly',
                 CustomEvent: 'readonly',
+                Node: 'readonly',
             },
         },
         rules: {

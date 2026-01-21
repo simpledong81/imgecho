@@ -130,7 +130,24 @@ const locales = {
         success: 'Success',
         confirm: 'Confirm',
         cancel: 'Cancel',
-        noSettingsToSave: 'No settings to save'
+        noSettingsToSave: 'No settings to save',
+
+        // Logo/水印系统
+        logoWatermark: 'Logo/Watermark',
+        noLogo: 'No Logo',
+        uploadLogo: 'Upload Logo',
+        logoPosition: 'Logo Position',
+        logoSize: 'Logo Size',
+        logoOpacity: 'Logo Opacity',
+        logoTiled: 'Tiled Watermark',
+        manageLogo: 'Manage Logos',
+        logoManager: 'Logo Manager',
+        logoUploaded: 'Logo uploaded successfully',
+        logoUploadFailed: 'Logo upload failed',
+        logoDeleted: 'Logo deleted',
+        confirmDeleteLogo: 'Confirm delete logo',
+        noLogos: 'No logos',
+        uploadLogoHint: 'Click "Upload Logo" to add your first logo'
     },
 
     zh: {
@@ -262,7 +279,24 @@ const locales = {
         success: '成功',
         confirm: '确认',
         cancel: '取消',
-        noSettingsToSave: '没有可保存的设置'
+        noSettingsToSave: '没有可保存的设置',
+
+        // Logo/水印系统
+        logoWatermark: 'Logo/水印',
+        noLogo: '无 Logo',
+        uploadLogo: '上传 Logo',
+        logoPosition: 'Logo 位置',
+        logoSize: 'Logo 大小',
+        logoOpacity: 'Logo 透明度',
+        logoTiled: '平铺水印',
+        manageLogo: '管理 Logo',
+        logoManager: 'Logo 管理器',
+        logoUploaded: 'Logo 上传成功',
+        logoUploadFailed: 'Logo 上传失败',
+        logoDeleted: 'Logo 已删除',
+        confirmDeleteLogo: '确定删除 Logo',
+        noLogos: '暂无 Logo',
+        uploadLogoHint: '点击"上传 Logo"添加您的第一个 Logo'
     }
 };
 
@@ -340,7 +374,11 @@ class LanguageManager {
             'font-position': 'fontPosition',
             'copyright': 'copyright',
             'notes': 'notes',
-            'display-mode': 'displayMode'
+            'display-mode': 'displayMode',
+            'logo-select': 'noLogo',
+            'logo-position': 'logoPosition',
+            'logo-size': 'logoSize',
+            'logo-opacity': 'logoOpacity'
         };
 
         Object.entries(labelMap).forEach(([id, key]) => {
@@ -407,6 +445,29 @@ class LanguageManager {
             displayModeSelect.options[0].text = this.get('modeFull');
             displayModeSelect.options[1].text = this.get('modeSimple');
         }
+
+        // 更新 Logo 位置选项
+        const logoPositionSelect = document.getElementById('logo-position');
+        if (logoPositionSelect) {
+            logoPositionSelect.options[0].text = this.get('positionTopLeft');
+            logoPositionSelect.options[1].text = this.get('positionTopRight');
+            logoPositionSelect.options[2].text = this.get('positionBottomLeft');
+            logoPositionSelect.options[3].text = this.get('positionBottomRight');
+            logoPositionSelect.options[4].text = this.get('positionCenter');
+        }
+
+        // 更新所有带 data-i18n 的元素（包括 checkbox 标签等）
+        document.querySelectorAll('[data-i18n]').forEach(element => {
+            const key = element.getAttribute('data-i18n');
+            if (key && element.tagName !== 'OPTION') {
+                // 对于 option 元素，已经在上面单独处理了
+                // 对于其他元素（如 span, button 等），直接更新 textContent
+                if (element.childNodes.length === 1 && element.childNodes[0].nodeType === Node.TEXT_NODE) {
+                    // 只有纯文本节点才更新
+                    element.textContent = this.get(key);
+                }
+            }
+        });
     }
 
     updateButtonTexts() {
@@ -414,24 +475,36 @@ class LanguageManager {
         const exportInfoBtn = document.getElementById('export-info-btn');
         const singleModeBtn = document.getElementById('single-mode-btn');
         const batchModeBtn = document.getElementById('batch-mode-btn');
+        const uploadLogoBtn = document.getElementById('upload-logo-btn');
+        const manageLogosBtn = document.getElementById('manage-logos-btn');
 
         if (exportBtn) exportBtn.textContent = this.get('exportImage');
         if (exportInfoBtn) exportInfoBtn.textContent = this.get('exportInfoPage');
         if (singleModeBtn) singleModeBtn.textContent = this.get('singleMode');
         if (batchModeBtn) batchModeBtn.textContent = this.get('batchMode');
+        if (uploadLogoBtn) uploadLogoBtn.textContent = this.get('uploadLogo');
+        if (manageLogosBtn) manageLogosBtn.textContent = this.get('manageLogo');
     }
 
     updateSectionTitles() {
-        const sectionTitles = document.querySelectorAll('.section-title');
-        if (sectionTitles.length >= 3) {
-            sectionTitles[0].textContent = this.get('basicInfo');
-            sectionTitles[1].textContent = this.get('textSettings');
-            sectionTitles[2].textContent = this.get('otherInfo');
-        }
+        // 更新所有带 data-i18n 属性的章节标题
+        const sectionTitleSpans = document.querySelectorAll('.section-title span[data-i18n]');
+        sectionTitleSpans.forEach(span => {
+            const key = span.getAttribute('data-i18n');
+            if (key) {
+                span.textContent = this.get(key);
+            }
+        });
 
         const infoPanelTitle = document.querySelector('.info-panel h2');
         if (infoPanelTitle) {
             infoPanelTitle.textContent = this.get('imageInfo');
+        }
+
+        // 更新 Logo 管理器对话框标题
+        const logoManagerTitle = document.querySelector('#logo-manager-overlay h2');
+        if (logoManagerTitle) {
+            logoManagerTitle.textContent = this.get('logoManager');
         }
     }
 }

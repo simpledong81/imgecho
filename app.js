@@ -16,6 +16,8 @@ import { BatchUI } from './batchUI.js';
 import { Dialog } from './dialog.js';
 import { TemplateManager } from './templateManager.js';
 import { TemplateUI } from './templateUI.js';
+import { LogoManager } from './logoManager.js';
+import { LogoUI } from './logoUI.js';
 
 /**
  * 主应用类
@@ -38,6 +40,10 @@ export class ImgEchoApp {
         // 模板管理模块
         this.templateManager = new TemplateManager();
         this.templateUI = new TemplateUI(this.templateManager, this.languageManager);
+
+        // Logo 管理模块
+        this.logoManager = new LogoManager();
+        this.logoUI = new LogoUI(this.logoManager, this.languageManager);
     }
 
     /**
@@ -58,6 +64,9 @@ export class ImgEchoApp {
 
         // 初始化模板选择器
         this.templateUI.initTemplateSelectors();
+
+        // 初始化 Logo 选择器
+        this.logoUI.initLogoSelect();
 
         // 加载示例图片
         this.loadSampleImage();
@@ -143,6 +152,9 @@ export class ImgEchoApp {
 
         // 模板系统事件监听
         this.setupTemplateEventListeners();
+
+        // Logo 系统事件监听
+        this.setupLogoEventListeners();
     }
 
     /**
@@ -217,6 +229,16 @@ export class ImgEchoApp {
         // 监听获取当前设置事件（供模板保存使用）
         document.addEventListener('get-current-settings', () => {
             window.currentSettings = this.collectFormData();
+        });
+    }
+
+    /**
+     * 设置 Logo 系统事件监听器
+     */
+    setupLogoEventListeners() {
+        // 监听 Logo 设置变化事件
+        document.addEventListener('logo-settings-changed', () => {
+            this.scheduleRefresh();
         });
     }
 
@@ -508,7 +530,7 @@ export class ImgEchoApp {
      * 刷新画布内容
      */
     refreshCanvas() {
-        MetadataRenderer.updateMetadataOverlay(this.imageProcessor, this.languageManager);
+        MetadataRenderer.updateMetadataOverlay(this.imageProcessor, this.languageManager, null, this.logoManager);
     }
 
     /**
