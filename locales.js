@@ -127,6 +127,16 @@ const locales = {
         delete: 'Delete',
         notice: 'Notice',
         error: 'Error',
+
+        // 内置模板名称
+        templatePhotography: 'Photography Portfolio',
+        templatePhotographyDesc: 'White text at bottom-left, perfect for photography showcase',
+        templateInstagram: 'Instagram Style',
+        templateInstagramDesc: 'Bottom-center large font, perfect for social media',
+        templateProduct: 'Product Display',
+        templateProductDesc: 'Bottom-right brand info, perfect for commercial products',
+        templateMinimal: 'Minimal Style',
+        templateMinimalDesc: 'Bottom-right small font, minimalist style',
         success: 'Success',
         confirm: 'Confirm',
         cancel: 'Cancel',
@@ -147,7 +157,19 @@ const locales = {
         logoDeleted: 'Logo deleted',
         confirmDeleteLogo: 'Confirm delete logo',
         noLogos: 'No logos',
-        uploadLogoHint: 'Click "Upload Logo" to add your first logo'
+        uploadLogoHint: 'Click "Upload Logo" to add your first logo',
+
+        // 高级文字样式
+        fontColor: 'Font Color',
+        fontOpacity: 'Font Opacity',
+        strokeColor: 'Stroke Color',
+        strokeWidth: 'Stroke Width',
+        textShadow: 'Text Shadow',
+        bgMask: 'Background Mask',
+        bgMaskOpacity: 'Mask Opacity',
+        textRotation: 'Text Rotation',
+        lineHeight: 'Line Height',
+        letterSpacing: 'Letter Spacing'
     },
 
     zh: {
@@ -248,7 +270,7 @@ const locales = {
         userTemplates: '我的模板',
         selectTemplate: '选择模板...',
         applyTemplate: '应用',
-        saveAsTemplate: '保存为模板',
+        saveAsTemplate: '保存模板',
         manageTemplates: '管理模板',
         templateName: '模板名称',
         templateDescription: '模板描述',
@@ -276,6 +298,17 @@ const locales = {
         delete: '删除',
         notice: '提示',
         error: '错误',
+
+        // 内置模板名称
+        templatePhotography: '摄影作品集',
+        templatePhotographyDesc: '左下角白色文字，适合摄影作品展示',
+        templateInstagram: 'Instagram 风格',
+        templateInstagramDesc: '底部居中大字体，适合社交媒体',
+        templateProduct: '产品图',
+        templateProductDesc: '右下角品牌信息，适合商业产品展示',
+        templateMinimal: '极简风格',
+        templateMinimalDesc: '右下角小字体，极简主义风格',
+
         success: '成功',
         confirm: '确认',
         cancel: '取消',
@@ -296,7 +329,19 @@ const locales = {
         logoDeleted: 'Logo 已删除',
         confirmDeleteLogo: '确定删除 Logo',
         noLogos: '暂无 Logo',
-        uploadLogoHint: '点击"上传 Logo"添加您的第一个 Logo'
+        uploadLogoHint: '点击"上传 Logo"添加您的第一个 Logo',
+
+        // 高级文字样式
+        fontColor: '文字颜色',
+        fontOpacity: '文字透明度',
+        strokeColor: '描边颜色',
+        strokeWidth: '描边粗细',
+        textShadow: '文字阴影',
+        bgMask: '背景遮罩',
+        bgMaskOpacity: '遮罩透明度',
+        textRotation: '文字旋转',
+        lineHeight: '行间距',
+        letterSpacing: '字间距'
     }
 };
 
@@ -351,6 +396,9 @@ class LanguageManager {
 
         // 更新章节标题
         this.updateSectionTitles();
+
+        // 触发语言切换事件，通知其他模块更新
+        document.dispatchEvent(new CustomEvent('language-changed'));
 
         // 触发刷新以更新画布上的文字
         if (typeof window.scheduleRefresh === 'function') {
@@ -477,6 +525,8 @@ class LanguageManager {
         const batchModeBtn = document.getElementById('batch-mode-btn');
         const uploadLogoBtn = document.getElementById('upload-logo-btn');
         const manageLogosBtn = document.getElementById('manage-logos-btn');
+        const saveTemplateBtn = document.getElementById('save-template-btn');
+        const manageTemplatesBtn = document.getElementById('manage-templates-btn');
 
         if (exportBtn) exportBtn.textContent = this.get('exportImage');
         if (exportInfoBtn) exportInfoBtn.textContent = this.get('exportInfoPage');
@@ -484,6 +534,18 @@ class LanguageManager {
         if (batchModeBtn) batchModeBtn.textContent = this.get('batchMode');
         if (uploadLogoBtn) uploadLogoBtn.textContent = this.get('uploadLogo');
         if (manageLogosBtn) manageLogosBtn.textContent = this.get('manageLogo');
+
+        // 对于包含 SVG 图标的按钮，需要保留图标并只更新文本内容
+        if (saveTemplateBtn) {
+            const svg = saveTemplateBtn.querySelector('svg');
+            saveTemplateBtn.textContent = this.get('saveAsTemplate');
+            if (svg) saveTemplateBtn.insertBefore(svg, saveTemplateBtn.firstChild);
+        }
+        if (manageTemplatesBtn) {
+            const svg = manageTemplatesBtn.querySelector('svg');
+            manageTemplatesBtn.textContent = this.get('manageTemplates');
+            if (svg) manageTemplatesBtn.insertBefore(svg, manageTemplatesBtn.firstChild);
+        }
     }
 
     updateSectionTitles() {

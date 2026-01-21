@@ -38,7 +38,7 @@ export class ImgEchoApp {
         this.batchUI = new BatchUI(this.batchProcessor, this.languageManager);
 
         // 模板管理模块
-        this.templateManager = new TemplateManager();
+        this.templateManager = new TemplateManager(this.languageManager);
         this.templateUI = new TemplateUI(this.templateManager, this.languageManager);
 
         // Logo 管理模块
@@ -110,7 +110,14 @@ export class ImgEchoApp {
         }
         
         // 所有输入字段的实时刷新事件
-        const inputFields = ['camera', 'lens', 'location', 'iso', 'aperture', 'shutter', 'notes', 'copyright', 'font-family', 'font-weight', 'font-position', 'display-mode'];
+        const inputFields = [
+            'camera', 'lens', 'location', 'iso', 'aperture', 'shutter', 'notes', 'copyright',
+            'font-family', 'font-weight', 'font-position', 'display-mode',
+            // 高级文字样式字段
+            'font-color', 'font-opacity', 'stroke-color', 'stroke-width',
+            'text-shadow', 'bg-mask', 'bg-mask-opacity', 'text-rotation',
+            'letter-spacing', 'line-height'
+        ];
         inputFields.forEach(id => {
             const element = document.getElementById(id);
             if (element) {
@@ -124,7 +131,33 @@ export class ImgEchoApp {
                 }
             }
         });
-        
+
+        // 高级文字样式滑块值显示更新
+        const sliderValuePairs = [
+            { slider: 'font-opacity', value: 'font-opacity-value' },
+            { slider: 'stroke-width', value: 'stroke-width-value' },
+            { slider: 'bg-mask-opacity', value: 'bg-mask-opacity-value' },
+            { slider: 'text-rotation', value: 'text-rotation-value' },
+            { slider: 'letter-spacing', value: 'letter-spacing-value' },
+            { slider: 'line-height', value: 'line-height-value' }
+        ];
+
+        sliderValuePairs.forEach(pair => {
+            const sliderElement = document.getElementById(pair.slider);
+            const valueElement = document.getElementById(pair.value);
+            if (sliderElement && valueElement) {
+                sliderElement.addEventListener('input', (e) => {
+                    const value = e.target.value;
+                    // 行间距需要保留一位小数
+                    if (pair.slider === 'line-height') {
+                        valueElement.textContent = parseFloat(value).toFixed(1);
+                    } else {
+                        valueElement.textContent = value;
+                    }
+                });
+            }
+        });
+
         // 语言切换事件
         const languageSelect = document.getElementById('language-select');
         if (languageSelect) {
@@ -136,6 +169,12 @@ export class ImgEchoApp {
             // 设置当前选中的语言
             languageSelect.value = this.languageManager.currentLanguage;
         }
+
+        // 监听语言切换事件，更新模板翻译
+        document.addEventListener('language-changed', () => {
+            this.templateManager.updateBuiltInTemplateTranslations();
+            this.templateUI.refreshTemplateSelectors();
+        });
         
         // 导出按钮事件
         document.getElementById('export-btn').addEventListener('click', () => {
@@ -275,6 +314,60 @@ export class ImgEchoApp {
             if (blurValue) blurValue.textContent = parseFloat(settings.blurValue).toFixed(1);
         }
 
+        // 应用高级文字样式设置
+        if (settings.fontColor) {
+            const colorInput = document.getElementById('font-color');
+            if (colorInput) colorInput.value = settings.fontColor;
+        }
+        if (settings.fontOpacity !== undefined) {
+            const opacityInput = document.getElementById('font-opacity');
+            const opacityValue = document.getElementById('font-opacity-value');
+            if (opacityInput) opacityInput.value = settings.fontOpacity;
+            if (opacityValue) opacityValue.textContent = settings.fontOpacity;
+        }
+        if (settings.strokeColor) {
+            const strokeColorInput = document.getElementById('stroke-color');
+            if (strokeColorInput) strokeColorInput.value = settings.strokeColor;
+        }
+        if (settings.strokeWidth !== undefined) {
+            const strokeWidthInput = document.getElementById('stroke-width');
+            const strokeWidthValue = document.getElementById('stroke-width-value');
+            if (strokeWidthInput) strokeWidthInput.value = settings.strokeWidth;
+            if (strokeWidthValue) strokeWidthValue.textContent = settings.strokeWidth;
+        }
+        if (settings.textShadow !== undefined) {
+            const textShadowInput = document.getElementById('text-shadow');
+            if (textShadowInput) textShadowInput.checked = settings.textShadow;
+        }
+        if (settings.bgMask !== undefined) {
+            const bgMaskInput = document.getElementById('bg-mask');
+            if (bgMaskInput) bgMaskInput.checked = settings.bgMask;
+        }
+        if (settings.bgMaskOpacity !== undefined) {
+            const bgMaskOpacityInput = document.getElementById('bg-mask-opacity');
+            const bgMaskOpacityValue = document.getElementById('bg-mask-opacity-value');
+            if (bgMaskOpacityInput) bgMaskOpacityInput.value = settings.bgMaskOpacity;
+            if (bgMaskOpacityValue) bgMaskOpacityValue.textContent = settings.bgMaskOpacity;
+        }
+        if (settings.textRotation !== undefined) {
+            const textRotationInput = document.getElementById('text-rotation');
+            const textRotationValue = document.getElementById('text-rotation-value');
+            if (textRotationInput) textRotationInput.value = settings.textRotation;
+            if (textRotationValue) textRotationValue.textContent = settings.textRotation;
+        }
+        if (settings.letterSpacing !== undefined) {
+            const letterSpacingInput = document.getElementById('letter-spacing');
+            const letterSpacingValue = document.getElementById('letter-spacing-value');
+            if (letterSpacingInput) letterSpacingInput.value = settings.letterSpacing;
+            if (letterSpacingValue) letterSpacingValue.textContent = settings.letterSpacing;
+        }
+        if (settings.lineHeight !== undefined) {
+            const lineHeightInput = document.getElementById('line-height');
+            const lineHeightValue = document.getElementById('line-height-value');
+            if (lineHeightInput) lineHeightInput.value = settings.lineHeight;
+            if (lineHeightValue) lineHeightValue.textContent = parseFloat(settings.lineHeight).toFixed(1);
+        }
+
         // 刷新画布
         this.scheduleRefresh();
 
@@ -410,6 +503,60 @@ export class ImgEchoApp {
         }
         if (metadata.fontPosition !== undefined) document.getElementById('font-position').value = metadata.fontPosition || 'bottom-right';
         if (metadata.displayMode !== undefined) document.getElementById('display-mode').value = metadata.displayMode || 'full';
+
+        // 填充高级文字样式设置
+        if (metadata.fontColor !== undefined) {
+            const colorInput = document.getElementById('font-color');
+            if (colorInput) colorInput.value = metadata.fontColor || '#FFFFFF';
+        }
+        if (metadata.fontOpacity !== undefined) {
+            const opacityInput = document.getElementById('font-opacity');
+            const opacityValue = document.getElementById('font-opacity-value');
+            if (opacityInput) opacityInput.value = metadata.fontOpacity || '100';
+            if (opacityValue) opacityValue.textContent = metadata.fontOpacity || '100';
+        }
+        if (metadata.strokeColor !== undefined) {
+            const strokeColorInput = document.getElementById('stroke-color');
+            if (strokeColorInput) strokeColorInput.value = metadata.strokeColor || '#000000';
+        }
+        if (metadata.strokeWidth !== undefined) {
+            const strokeWidthInput = document.getElementById('stroke-width');
+            const strokeWidthValue = document.getElementById('stroke-width-value');
+            if (strokeWidthInput) strokeWidthInput.value = metadata.strokeWidth || '0';
+            if (strokeWidthValue) strokeWidthValue.textContent = metadata.strokeWidth || '0';
+        }
+        if (metadata.textShadow !== undefined) {
+            const textShadowInput = document.getElementById('text-shadow');
+            if (textShadowInput) textShadowInput.checked = metadata.textShadow ?? true;
+        }
+        if (metadata.bgMask !== undefined) {
+            const bgMaskInput = document.getElementById('bg-mask');
+            if (bgMaskInput) bgMaskInput.checked = metadata.bgMask ?? false;
+        }
+        if (metadata.bgMaskOpacity !== undefined) {
+            const bgMaskOpacityInput = document.getElementById('bg-mask-opacity');
+            const bgMaskOpacityValue = document.getElementById('bg-mask-opacity-value');
+            if (bgMaskOpacityInput) bgMaskOpacityInput.value = metadata.bgMaskOpacity || '50';
+            if (bgMaskOpacityValue) bgMaskOpacityValue.textContent = metadata.bgMaskOpacity || '50';
+        }
+        if (metadata.textRotation !== undefined) {
+            const textRotationInput = document.getElementById('text-rotation');
+            const textRotationValue = document.getElementById('text-rotation-value');
+            if (textRotationInput) textRotationInput.value = metadata.textRotation || '0';
+            if (textRotationValue) textRotationValue.textContent = metadata.textRotation || '0';
+        }
+        if (metadata.letterSpacing !== undefined) {
+            const letterSpacingInput = document.getElementById('letter-spacing');
+            const letterSpacingValue = document.getElementById('letter-spacing-value');
+            if (letterSpacingInput) letterSpacingInput.value = metadata.letterSpacing || '0';
+            if (letterSpacingValue) letterSpacingValue.textContent = metadata.letterSpacing || '0';
+        }
+        if (metadata.lineHeight !== undefined) {
+            const lineHeightInput = document.getElementById('line-height');
+            const lineHeightValue = document.getElementById('line-height-value');
+            if (lineHeightInput) lineHeightInput.value = metadata.lineHeight || '1.8';
+            if (lineHeightValue) lineHeightValue.textContent = metadata.lineHeight || '1.8';
+        }
     }
 
     /**
@@ -431,6 +578,18 @@ export class ImgEchoApp {
             fontSize: document.getElementById('font-size').value,
             fontPosition: document.getElementById('font-position').value,
             displayMode: document.getElementById('display-mode').value,
+
+            // 高级文字样式参数
+            fontColor: document.getElementById('font-color')?.value || '#FFFFFF',
+            fontOpacity: document.getElementById('font-opacity')?.value || '100',
+            strokeColor: document.getElementById('stroke-color')?.value || '#000000',
+            strokeWidth: document.getElementById('stroke-width')?.value || '0',
+            textShadow: document.getElementById('text-shadow')?.checked ?? true,
+            bgMask: document.getElementById('bg-mask')?.checked ?? false,
+            bgMaskOpacity: document.getElementById('bg-mask-opacity')?.value || '50',
+            textRotation: document.getElementById('text-rotation')?.value || '0',
+            letterSpacing: document.getElementById('letter-spacing')?.value || '0',
+            lineHeight: document.getElementById('line-height')?.value || '1.8',
         };
     }
 

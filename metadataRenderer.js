@@ -34,22 +34,28 @@ export class MetadataRenderer {
         const fontWeight = document.getElementById('font-weight').value;
         const fontSizePercent = parseFloat(document.getElementById('font-size').value);
         const fontSize = Math.max(12, (canvas.height * fontSizePercent) / 100);
-        const lineHeight = fontSize * 1.8;
-        
+
+        // 获取高级文字样式参数
+        const fontColor = document.getElementById('font-color')?.value || '#FFFFFF';
+        const fontOpacity = parseFloat(document.getElementById('font-opacity')?.value || 100) / 100;
+        const strokeColor = document.getElementById('stroke-color')?.value || '#000000';
+        const strokeWidth = parseFloat(document.getElementById('stroke-width')?.value || 0);
+        const textShadow = document.getElementById('text-shadow')?.checked ?? true;
+        const backgroundMask = document.getElementById('bg-mask')?.checked || false;
+        const maskOpacity = parseFloat(document.getElementById('bg-mask-opacity')?.value || 50) / 100;
+        const textRotation = parseFloat(document.getElementById('text-rotation')?.value || 0);
+        const letterSpacing = parseFloat(document.getElementById('letter-spacing')?.value || 0);
+        const customLineHeight = parseFloat(document.getElementById('line-height')?.value || 1.8);
+        const lineHeight = fontSize * customLineHeight;
+
         // 设置文字样式
         const fontStyle = `${fontWeight} ${fontSize}px ${fontFamily}`;
         ctx.font = fontStyle;
-        
+
         // 根据位置设置文本对齐方式
         const fontPosition = document.getElementById('font-position').value;
         ctx.textAlign = (fontPosition === 'center' || fontPosition === 'bottom-center') ? 'center' : (fontPosition.includes('right') ? 'right' : 'left');
         ctx.textBaseline = fontPosition.includes('bottom') ? 'bottom' : 'top';
-        
-        // 设置阴影效果
-        ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
-        ctx.shadowBlur = 4;
-        ctx.shadowOffsetX = 1;
-        ctx.shadowOffsetY = 1;
         
         // 收集所有元数据字段
         const metadata = this.collectMetadata(languageManager);
@@ -67,7 +73,18 @@ export class MetadataRenderer {
         if (textLines.length === 0) return;
 
         // 绘制文本
-        this.drawTextLines(ctx, canvas, textLines, fontSize, lineHeight);
+        this.drawTextLines(ctx, canvas, textLines, fontSize, {
+            lineHeight,
+            fontColor,
+            fontOpacity,
+            strokeColor,
+            strokeWidth,
+            textShadow,
+            backgroundMask,
+            maskOpacity,
+            textRotation,
+            letterSpacing
+        });
 
         // 绘制 Logo（如果有）
         if (logoManager && logoManager.getCurrentLogo()) {
@@ -118,41 +135,151 @@ export class MetadataRenderer {
      * @param {HTMLCanvasElement} canvas - 画布元素
      * @param {Array} textLines - 文本行数组
      * @param {number} fontSize - 字体大小
-     * @param {number} lineHeight - 行高
+     * @param {Object} options - 渲染选项
+     * @param {number} options.lineHeight - 行高
+     * @param {string} options.fontColor - 文字颜色
+     * @param {number} options.fontOpacity - 文字透明度 (0-1)
+     * @param {string} options.strokeColor - 描边颜色
+     * @param {number} options.strokeWidth - 描边粗细
+     * @param {boolean} options.textShadow - 是否显示文字阴影
+     * @param {boolean} options.backgroundMask - 是否显示背景遮罩
+     * @param {number} options.maskOpacity - 遮罩透明度 (0-1)
+     * @param {number} options.textRotation - 文字旋转角度
+     * @param {number} options.letterSpacing - 字间距
      */
-    static drawTextLines(ctx, canvas, textLines, fontSize, lineHeight) {
+    static drawTextLines(ctx, canvas, textLines, fontSize, options = {}) {
+        const {
+            lineHeight = fontSize * 1.8,
+            fontColor = '#FFFFFF',
+            fontOpacity = 1,
+            strokeColor = '#000000',
+            strokeWidth = 0,
+            textShadow = true,
+            backgroundMask = false,
+            maskOpacity = 0.5,
+            textRotation = 0,
+            letterSpacing = 0
+        } = options;
+
         // 获取字体位置
         const fontPosition = document.getElementById('font-position').value;
-        
+
         // 计算文本位置和布局
         const margin = Math.max(25, fontSize * 1.2);
-        
+
         // 计算文本块的总高度和最大宽度
         let maxLineWidth = 0;
         textLines.forEach(line => {
             const lineWidth = ctx.measureText(line).width;
             maxLineWidth = Math.max(maxLineWidth, lineWidth);
         });
-        
+
         const totalTextHeight = textLines.length * lineHeight;
-        
+
         // 根据位置计算起始坐标
         const { startX, startY } = calculateTextPosition(fontPosition, margin, maxLineWidth, totalTextHeight, canvas);
-        
+
         // 确保文本绘制不受任何滤镜影响
         ctx.save();
         ctx.filter = 'none';
-        ctx.globalAlpha = 1;
-        
+        ctx.globalAlpha = fontOpacity;  // 应用文字透明度
+
+        // 应用旋转（如果需要）
+        if (textRotation !== 0) {
+            const centerX = startX + maxLineWidth / 2;
+            const centerY = startY + totalTextHeight / 2;
+            ctx.translate(centerX, centerY);
+            ctx.rotate((textRotation * Math.PI) / 180);
+            ctx.translate(-centerX, -centerY);
+        }
+
+        // 绘制背景遮罩（如果启用）
+        if (backgroundMask) {
+            this.drawBackgroundMask(ctx, startX, startY, maxLineWidth, totalTextHeight, maskOpacity, fontOpacity);
+        }
+
+        // 设置文字阴影（可选）
+        if (textShadow) {
+            ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
+            ctx.shadowBlur = 4;
+            ctx.shadowOffsetX = 1;
+            ctx.shadowOffsetY = 1;
+        } else {
+            ctx.shadowColor = 'transparent';
+            ctx.shadowBlur = 0;
+            ctx.shadowOffsetX = 0;
+            ctx.shadowOffsetY = 0;
+        }
+
+        // 设置文字颜色
+        ctx.fillStyle = fontColor;
+
+        // 设置描边（如果需要）
+        if (strokeWidth > 0) {
+            ctx.strokeStyle = strokeColor;
+            ctx.lineWidth = strokeWidth;
+        }
+
         // 绘制文本
-        ctx.fillStyle = 'white';
         textLines.forEach((line, index) => {
             const y = startY + index * lineHeight;
             const x = startX;
-            ctx.fillText(line, x, y);
+
+            // 如果需要字间距，逐字符绘制
+            if (letterSpacing > 0) {
+                this.drawTextWithLetterSpacing(ctx, line, x, y, letterSpacing, strokeWidth);
+            } else {
+                // 正常绘制
+                if (strokeWidth > 0) {
+                    ctx.strokeText(line, x, y);
+                }
+                ctx.fillText(line, x, y);
+            }
         });
-        
+
         ctx.restore();
+    }
+
+    /**
+     * 绘制带字间距的文本
+     * @param {CanvasRenderingContext2D} ctx - 画布上下文
+     * @param {string} text - 文本内容
+     * @param {number} x - X 坐标
+     * @param {number} y - Y 坐标
+     * @param {number} letterSpacing - 字间距
+     * @param {number} strokeWidth - 描边粗细
+     */
+    static drawTextWithLetterSpacing(ctx, text, x, y, letterSpacing, strokeWidth) {
+        let currentX = x;
+        for (let char of text) {
+            if (strokeWidth > 0) {
+                ctx.strokeText(char, currentX, y);
+            }
+            ctx.fillText(char, currentX, y);
+            currentX += ctx.measureText(char).width + letterSpacing;
+        }
+    }
+
+    /**
+     * 绘制背景遮罩
+     * @param {CanvasRenderingContext2D} ctx - 画布上下文
+     * @param {number} x - X 坐标
+     * @param {number} y - Y 坐标
+     * @param {number} width - 宽度
+     * @param {number} height - 高度
+     * @param {number} opacity - 遮罩透明度 (0-1)
+     * @param {number} currentAlpha - 当前透明度（用于恢复）
+     */
+    static drawBackgroundMask(ctx, x, y, width, height, opacity, currentAlpha) {
+        const padding = 10;
+        ctx.save();
+        ctx.globalAlpha = opacity;
+        ctx.fillStyle = '#000000';
+        ctx.shadowColor = 'transparent';  // 背景遮罩不需要阴影
+        ctx.shadowBlur = 0;
+        ctx.fillRect(x - padding, y - padding, width + padding * 2, height + padding * 2);
+        ctx.restore();
+        ctx.globalAlpha = currentAlpha;  // 恢复文字透明度
     }
 
     /**

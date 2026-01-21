@@ -24,8 +24,9 @@
  * TemplateManager 类
  */
 export class TemplateManager extends EventTarget {
-    constructor() {
+    constructor(languageManager = null) {
         super();
+        this.languageManager = languageManager;
         this.storageKey = 'imgecho_templates';
         this.templates = [];
         this.currentTemplateId = null;
@@ -43,14 +44,26 @@ export class TemplateManager extends EventTarget {
     }
 
     /**
+     * 获取翻译文本
+     * @param {string} key - 翻译键
+     * @param {string} fallback - 备用文本
+     * @returns {string}
+     */
+    t(key, fallback = '') {
+        return this.languageManager ? this.languageManager.get(key) : fallback;
+    }
+
+    /**
      * 加载内置模板
      */
     loadBuiltInTemplates() {
         const builtInTemplates = [
             {
                 id: 'preset-photography',
-                name: '摄影作品集',
-                description: '左下角白色文字，适合摄影作品展示',
+                nameKey: 'templatePhotography',
+                descKey: 'templatePhotographyDesc',
+                name: this.t('templatePhotography', '摄影作品集'),
+                description: this.t('templatePhotographyDesc', '左下角白色文字，适合摄影作品展示'),
                 isBuiltIn: true,
                 settings: {
                     fontFamily: "Arial, 'Microsoft YaHei', 微软雅黑, sans-serif",
@@ -64,8 +77,10 @@ export class TemplateManager extends EventTarget {
             },
             {
                 id: 'preset-instagram',
-                name: 'Instagram 风格',
-                description: '底部居中大字体，适合社交媒体',
+                nameKey: 'templateInstagram',
+                descKey: 'templateInstagramDesc',
+                name: this.t('templateInstagram', 'Instagram 风格'),
+                description: this.t('templateInstagramDesc', '底部居中大字体，适合社交媒体'),
                 isBuiltIn: true,
                 settings: {
                     fontFamily: "Helvetica, 'PingFang SC', 苹方, sans-serif",
@@ -79,8 +94,10 @@ export class TemplateManager extends EventTarget {
             },
             {
                 id: 'preset-product',
-                name: '产品图',
-                description: '右下角品牌信息，适合商业产品展示',
+                nameKey: 'templateProduct',
+                descKey: 'templateProductDesc',
+                name: this.t('templateProduct', '产品图'),
+                description: this.t('templateProductDesc', '右下角品牌信息，适合商业产品展示'),
                 isBuiltIn: true,
                 settings: {
                     fontFamily: "'Segoe UI', 'Noto Sans SC', 'Source Han Sans SC', sans-serif",
@@ -94,8 +111,10 @@ export class TemplateManager extends EventTarget {
             },
             {
                 id: 'preset-minimal',
-                name: '极简风格',
-                description: '右下角小字体，极简主义风格',
+                nameKey: 'templateMinimal',
+                descKey: 'templateMinimalDesc',
+                name: this.t('templateMinimal', '极简风格'),
+                description: this.t('templateMinimalDesc', '右下角小字体，极简主义风格'),
                 isBuiltIn: true,
                 settings: {
                     fontFamily: "Georgia, 'KaiTi', 楷体, serif",
@@ -111,6 +130,19 @@ export class TemplateManager extends EventTarget {
 
         // 添加内置模板（不保存到 localStorage）
         this.templates = [...builtInTemplates];
+    }
+
+    /**
+     * 更新内置模板的翻译
+     * 在语言切换时调用
+     */
+    updateBuiltInTemplateTranslations() {
+        this.templates.forEach(template => {
+            if (template.isBuiltIn && template.nameKey && template.descKey) {
+                template.name = this.t(template.nameKey, template.name);
+                template.description = this.t(template.descKey, template.description);
+            }
+        });
     }
 
     /**
