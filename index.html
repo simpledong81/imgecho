@@ -104,6 +104,31 @@
                             导出信息页
                         </button>
                     </div>
+
+                    <!-- 撤销/重做控件 -->
+                    <div class="undo-redo-controls" style="margin-top: 10px;">
+                        <button id="undo-btn" class="btn btn-secondary" aria-label="Undo" data-i18n="undo" disabled>
+                            <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M3 7v6h6"/>
+                                <path d="M21 17a9 9 0 00-9-9 9 9 0 00-6 2.3L3 13"/>
+                            </svg>
+                            撤销
+                        </button>
+                        <button id="redo-btn" class="btn btn-secondary" aria-label="Redo" data-i18n="redo" disabled>
+                            <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 7v6h-6"/>
+                                <path d="M3 17a9 9 0 019-9 9 9 0 016 2.3l3-2.3"/>
+                            </svg>
+                            重做
+                        </button>
+                        <button id="history-panel-btn" class="btn btn-secondary" aria-label="History" data-i18n="historyPanel">
+                            <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <polyline points="12 6 12 12 16 14"/>
+                            </svg>
+                            历史记录
+                        </button>
+                    </div>
                 </section>
 
                 <!-- 批量处理面板 -->
@@ -686,6 +711,28 @@
             </div>
             <div class="dialog-content logo-manager-content">
                 <div id="logo-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 历史记录面板 -->
+    <div id="history-panel-overlay" class="dialog-overlay" style="display: none;">
+        <div class="dialog-box history-panel-dialog">
+            <div class="dialog-header">
+                <h3 data-i18n="historyPanel">历史记录</h3>
+            </div>
+            <div class="dialog-content history-panel-content">
+                <div id="history-list" class="history-list">
+                    <!-- 动态生成历史记录项 -->
+                </div>
+            </div>
+            <div class="dialog-footer">
+                <button id="clear-history-btn" class="btn btn-secondary" data-i18n="clearHistory">
+                    清空历史
+                </button>
+                <button class="btn btn-secondary" onclick="document.getElementById('history-panel-overlay').style.display='none'" data-i18n="close">
+                    关闭
+                </button>
             </div>
         </div>
     </div>

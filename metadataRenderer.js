@@ -195,7 +195,7 @@ export class MetadataRenderer {
 
         // 绘制背景遮罩（如果启用）
         if (backgroundMask) {
-            this.drawBackgroundMask(ctx, startX, startY, maxLineWidth, totalTextHeight, maskOpacity, fontOpacity);
+            this.drawBackgroundMask(ctx, startX, startY, maxLineWidth, totalTextHeight, maskOpacity, fontOpacity, fontPosition, lineHeight);
         }
 
         // 设置文字阴影（可选）
@@ -263,21 +263,47 @@ export class MetadataRenderer {
     /**
      * 绘制背景遮罩
      * @param {CanvasRenderingContext2D} ctx - 画布上下文
-     * @param {number} x - X 坐标
-     * @param {number} y - Y 坐标
-     * @param {number} width - 宽度
-     * @param {number} height - 高度
+     * @param {number} x - X 坐标（文本绘制起点）
+     * @param {number} y - Y 坐标（第一行文本的 baseline 位置）
+     * @param {number} width - 宽度（文本块宽度）
+     * @param {number} height - 高度（totalTextHeight）
      * @param {number} opacity - 遮罩透明度 (0-1)
      * @param {number} currentAlpha - 当前透明度（用于恢复）
+     * @param {string} fontPosition - 文字位置（用于计算遮罩实际位置）
+     * @param {number} lineHeight - 单行行高
      */
-    static drawBackgroundMask(ctx, x, y, width, height, opacity, currentAlpha) {
+    static drawBackgroundMask(ctx, x, y, width, height, opacity, currentAlpha, fontPosition, lineHeight) {
         const padding = 10;
+
+        // 根据文字位置和对齐方式计算遮罩的实际左上角坐标
+        let maskX = x;
+        let maskY = y;
+
+        // 根据文字对齐方式调整遮罩 X 坐标
+        if (fontPosition === 'center' || fontPosition === 'bottom-center') {
+            // 居中对齐：遮罩应该从文本中心向两边扩展
+            maskX = x - width / 2;
+        } else if (fontPosition === 'top-right' || fontPosition === 'bottom-right') {
+            // 右对齐：遮罩应该在文本左侧
+            maskX = x - width;
+        }
+        // 左对齐（top-left, bottom-left）：maskX = x，无需调整
+
+        // 根据文字基线调整遮罩 Y 坐标
+        // 对于 bottom 位置，y 是第一行文本的底部（textBaseline='bottom'）
+        // 第一行顶部在 y - lineHeight，所以遮罩顶部应该是 y - lineHeight
+        if (fontPosition.includes('bottom')) {
+            maskY = y - lineHeight;
+        }
+        // 对于 top 和 center 位置，y 是第一行文本的顶部（textBaseline='top'）
+        // maskY = y 正确
+
         ctx.save();
         ctx.globalAlpha = opacity;
         ctx.fillStyle = '#000000';
         ctx.shadowColor = 'transparent';  // 背景遮罩不需要阴影
         ctx.shadowBlur = 0;
-        ctx.fillRect(x - padding, y - padding, width + padding * 2, height + padding * 2);
+        ctx.fillRect(maskX - padding, maskY - padding, width + padding * 2, height + padding * 2);
         ctx.restore();
         ctx.globalAlpha = currentAlpha;  // 恢复文字透明度
     }

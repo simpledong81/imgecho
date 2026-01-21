@@ -63,6 +63,9 @@ export class Dialog {
                 this.cancelBtn.style.display = 'none';
             }
 
+            // 设置更高的 z-index，确保在其他对话框之上
+            this.overlay.style.zIndex = '10001';
+
             // 显示对话框
             this.overlay.style.display = 'flex';
 

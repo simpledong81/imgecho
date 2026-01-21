@@ -144,6 +144,7 @@ const locales = {
 
         // Logo/水印系统
         logoWatermark: 'Logo/Watermark',
+        selectLogo: 'Select Logo',
         noLogo: 'No Logo',
         uploadLogo: 'Upload Logo',
         logoPosition: 'Logo Position',
@@ -169,7 +170,28 @@ const locales = {
         bgMaskOpacity: 'Mask Opacity',
         textRotation: 'Text Rotation',
         lineHeight: 'Line Height',
-        letterSpacing: 'Letter Spacing'
+        letterSpacing: 'Letter Spacing',
+
+        // 撤销/重做和历史记录
+        undo: 'Undo',
+        redo: 'Redo',
+        historyPanel: 'History',
+        clearHistory: 'Clear History',
+        close: 'Close',
+        confirmClearHistory: 'Are you sure you want to clear all history? This action cannot be undone.',
+        noHistory: 'No history yet',
+        justNow: 'Just now',
+        minutesAgo: 'minutes ago',
+        hoursAgo: 'hours ago',
+
+        // 操作类型
+        operationImageUpload: 'Image Upload',
+        operationMetadataChange: 'Settings Change',
+        operationTextStyleChange: 'Text Style',
+        operationBlurChange: 'Blur Effect',
+        operationLogoChange: 'Logo Settings',
+        operationTemplateApplied: 'Template Applied',
+        operationBatchSettingChange: 'Batch Settings'
     },
 
     zh: {
@@ -316,6 +338,7 @@ const locales = {
 
         // Logo/水印系统
         logoWatermark: 'Logo/水印',
+        selectLogo: '选择 Logo',
         noLogo: '无 Logo',
         uploadLogo: '上传 Logo',
         logoPosition: 'Logo 位置',
@@ -341,7 +364,28 @@ const locales = {
         bgMaskOpacity: '遮罩透明度',
         textRotation: '文字旋转',
         lineHeight: '行间距',
-        letterSpacing: '字间距'
+        letterSpacing: '字间距',
+
+        // 撤销/重做和历史记录
+        undo: '撤销',
+        redo: '重做',
+        historyPanel: '历史记录',
+        clearHistory: '清空历史',
+        close: '关闭',
+        confirmClearHistory: '确定清空所有历史记录吗？此操作无法撤销。',
+        noHistory: '暂无历史记录',
+        justNow: '刚刚',
+        minutesAgo: '分钟前',
+        hoursAgo: '小时前',
+
+        // 操作类型
+        operationImageUpload: '上传图片',
+        operationMetadataChange: '修改设置',
+        operationTextStyleChange: '文字样式',
+        operationBlurChange: '模糊效果',
+        operationLogoChange: 'Logo 设置',
+        operationTemplateApplied: '应用模板',
+        operationBatchSettingChange: '批量设置'
     }
 };
 
@@ -502,6 +546,18 @@ class LanguageManager {
             logoPositionSelect.options[2].text = this.get('positionBottomLeft');
             logoPositionSelect.options[3].text = this.get('positionBottomRight');
             logoPositionSelect.options[4].text = this.get('positionCenter');
+        }
+
+        // 更新 Logo 选择选项（包括 data-i18n 标记的选项）
+        const logoSelect = document.getElementById('logo-select');
+        if (logoSelect) {
+            // 更新所有带 data-i18n 的 option 元素
+            Array.from(logoSelect.options).forEach(option => {
+                const key = option.getAttribute('data-i18n');
+                if (key) {
+                    option.textContent = this.get(key);
+                }
+            });
         }
 
         // 更新所有带 data-i18n 的元素（包括 checkbox 标签等）

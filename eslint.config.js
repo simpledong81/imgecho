@@ -24,6 +24,7 @@ export default [
                 EXIF: 'readonly',
                 languageManager: 'readonly',
                 alert: 'readonly',
+                confirm: 'readonly',
                 requestAnimationFrame: 'readonly',
                 setTimeout: 'readonly',
                 clearTimeout: 'readonly',

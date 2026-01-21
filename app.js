@@ -18,6 +18,7 @@ import { TemplateManager } from './templateManager.js';
 import { TemplateUI } from './templateUI.js';
 import { LogoManager } from './logoManager.js';
 import { LogoUI } from './logoUI.js';
+import { HistoryManager } from './historyManager.js';
 
 /**
  * 主应用类
@@ -44,6 +45,9 @@ export class ImgEchoApp {
         // Logo 管理模块
         this.logoManager = new LogoManager();
         this.logoUI = new LogoUI(this.logoManager, this.languageManager);
+
+        // 历史记录管理模块
+        this.historyManager = new HistoryManager(50);
     }
 
     /**
@@ -81,12 +85,12 @@ export class ImgEchoApp {
     setupEventListeners() {
         // 文件上传事件
         document.getElementById('file-input').addEventListener('change', this.handleImageUpload.bind(this));
-        
+
         // 模糊效果滑块事件
         const blurSlider = document.getElementById('blur-slider');
         blurSlider.addEventListener('input', this.handleBlurChange.bind(this));
         blurSlider.addEventListener('change', this.handleBlurChange.bind(this));
-        
+
         // 字体大小滑块事件
         const fontSizeSlider = document.getElementById('font-size');
         const fontSizeValue = document.getElementById('font-size-value');
@@ -94,21 +98,21 @@ export class ImgEchoApp {
             fontSizeSlider.addEventListener('input', (e) => {
                 const fontSizePercent = parseFloat(e.target.value);
                 fontSizeValue.textContent = fontSizePercent.toFixed(1);
-                
+
                 // 强制重新渲染整个画布内容
                 if (this.imageProcessor.getOriginalImage()) {
                     // 先清除画布
                     const ctx = this.imageProcessor.getContext();
                     const canvas = this.imageProcessor.getCanvas();
                     ctx.clearRect(0, 0, canvas.width, canvas.height);
-                    
+
                     // 重新绘制图片和元数据
                     this.imageProcessor.displayImageOnCanvas(this.imageProcessor.getOriginalImage());
                     this.refreshCanvas();
                 }
             });
         }
-        
+
         // 所有输入字段的实时刷新事件
         const inputFields = [
             'camera', 'lens', 'location', 'iso', 'aperture', 'shutter', 'notes', 'copyright',
@@ -175,12 +179,12 @@ export class ImgEchoApp {
             this.templateManager.updateBuiltInTemplateTranslations();
             this.templateUI.refreshTemplateSelectors();
         });
-        
+
         // 导出按钮事件
         document.getElementById('export-btn').addEventListener('click', () => {
             ExportManager.exportImageWithCanvas(this.imageProcessor, this.languageManager);
         });
-        
+
         // 导出信息页按钮事件
         document.getElementById('export-info-btn').addEventListener('click', () => {
             ExportManager.exportInfoPage(this.imageProcessor, this.languageManager);
@@ -194,6 +198,9 @@ export class ImgEchoApp {
 
         // Logo 系统事件监听
         this.setupLogoEventListeners();
+
+        // 历史记录系统事件监听
+        this.setupHistoryListeners();
     }
 
     /**
@@ -279,6 +286,414 @@ export class ImgEchoApp {
         document.addEventListener('logo-settings-changed', () => {
             this.scheduleRefresh();
         });
+    }
+
+    /**
+     * 设置历史记录系统事件监听器
+     */
+    setupHistoryListeners() {
+        // 监听快照恢复事件
+        this.historyManager.addEventListener('restore-snapshot', (e) => {
+            const snapshot = e.detail.snapshot;
+            this.restoreState(snapshot.state);
+        });
+
+        // 监听历史状态变化事件
+        this.historyManager.addEventListener('history-state-changed', (e) => {
+            this.updateUndoRedoButtons(e.detail.canUndo, e.detail.canRedo);
+        });
+
+        // 撤销/重做按钮点击
+        const undoBtn = document.getElementById('undo-btn');
+        const redoBtn = document.getElementById('redo-btn');
+        const historyPanelBtn = document.getElementById('history-panel-btn');
+
+        if (undoBtn) {
+            undoBtn.addEventListener('click', () => {
+                this.handleUndo();
+            });
+        }
+
+        if (redoBtn) {
+            redoBtn.addEventListener('click', () => {
+                this.handleRedo();
+            });
+        }
+
+        if (historyPanelBtn) {
+            historyPanelBtn.addEventListener('click', () => {
+                this.openHistoryPanel();
+            });
+        }
+
+        // 键盘快捷键
+        this.setupKeyboardShortcuts();
+    }
+
+    /**
+     * 设置键盘快捷键
+     */
+    setupKeyboardShortcuts() {
+        document.addEventListener('keydown', (e) => {
+            // 排除文本输入框
+            if (
+                document.activeElement.tagName === 'INPUT' ||
+                document.activeElement.tagName === 'TEXTAREA'
+            ) {
+                return;
+            }
+
+            // Ctrl+Z 或 Cmd+Z - 撤销
+            if ((e.ctrlKey || e.metaKey) && e.key === 'z' && !e.shiftKey) {
+                e.preventDefault();
+                this.handleUndo();
+            }
+
+            // Ctrl+Shift+Z 或 Cmd+Shift+Z - 重做
+            if ((e.ctrlKey || e.metaKey) && e.key === 'z' && e.shiftKey) {
+                e.preventDefault();
+                this.handleRedo();
+            }
+
+            // Ctrl+Y 或 Cmd+Y - 重做（备选快捷键）
+            if ((e.ctrlKey || e.metaKey) && e.key === 'y') {
+                e.preventDefault();
+                this.handleRedo();
+            }
+        });
+    }
+
+    /**
+     * 处理撤销操作
+     */
+    handleUndo() {
+        const previousSnapshot = this.historyManager.undo();
+        if (previousSnapshot) {
+            console.log('已撤销:', previousSnapshot.label);
+        }
+    }
+
+    /**
+     * 处理重做操作
+     */
+    handleRedo() {
+        const nextSnapshot = this.historyManager.redo();
+        if (nextSnapshot) {
+            console.log('已重做:', nextSnapshot.label);
+        }
+    }
+
+    /**
+     * 更新撤销/重做按钮状态
+     * @param {boolean} canUndo - 是否可以撤销
+     * @param {boolean} canRedo - 是否可以重做
+     */
+    updateUndoRedoButtons(canUndo, canRedo) {
+        const undoBtn = document.getElementById('undo-btn');
+        const redoBtn = document.getElementById('redo-btn');
+
+        if (undoBtn) undoBtn.disabled = !canUndo;
+        if (redoBtn) redoBtn.disabled = !canRedo;
+    }
+
+    /**
+     * 恢复状态到表单
+     * @param {Object} state - 状态对象
+     */
+    restoreState(state) {
+        // 复用现有的 fillFormWithMetadata 方法
+        this.fillFormWithMetadata(state);
+
+        // 恢复模糊度
+        const blurSlider = document.getElementById('blur-slider');
+        const blurValue = document.getElementById('blur-value');
+        if (blurSlider && state.blurValue !== undefined) {
+            blurSlider.value = state.blurValue;
+            if (blurValue) blurValue.textContent = parseFloat(state.blurValue).toFixed(1);
+        }
+
+        // 恢复 Logo 设置
+        if (state.logoId) {
+            this.logoManager.setCurrentLogo(state.logoId);
+            // 应用 Logo 设置
+            if (state.logoSettings) {
+                const logoPosition = document.getElementById('logo-position');
+                const logoSize = document.getElementById('logo-size');
+                const logoOpacity = document.getElementById('logo-opacity');
+                const logoTiled = document.getElementById('logo-tiled');
+
+                if (logoPosition) logoPosition.value = state.logoSettings.position || 'bottom-right';
+                if (logoSize) logoSize.value = state.logoSettings.size || 10;
+                if (logoOpacity) logoOpacity.value = state.logoSettings.opacity || 100;
+                if (logoTiled) logoTiled.checked = state.logoSettings.tiled || false;
+            }
+        } else {
+            this.logoManager.clearCurrentLogo();
+        }
+
+        // 触发画布刷新
+        this.scheduleRefresh();
+    }
+
+    /**
+     * 收集完整状态（用于历史记录）
+     * @returns {Object} 包含所有可序列化状态的对象
+     */
+    collectHistoryState() {
+        // 获取表单数据
+        const formData = this.collectFormData();
+
+        // 获取额外状态
+        const blurValue = document.getElementById('blur-slider')?.value || 0;
+
+        // 获取 Logo 状态
+        const currentLogo = this.logoManager.getCurrentLogo();
+        const logoId = currentLogo ? currentLogo.id : null;
+        const logoSettings = logoId
+            ? {
+                position: document.getElementById('logo-position')?.value || 'bottom-right',
+                size: parseFloat(document.getElementById('logo-size')?.value || 10),
+                opacity: parseFloat(document.getElementById('logo-opacity')?.value || 100),
+                tiled: document.getElementById('logo-tiled')?.checked || false,
+            }
+            : null;
+
+        // 获取图片状态（不存储图片本身）
+        const hasImage = !!this.imageProcessor.getOriginalImage();
+
+        return {
+            ...formData,
+            blurValue,
+            logoId,
+            logoSettings,
+            hasImage,
+        };
+    }
+
+    /**
+     * 打开历史记录面板
+     */
+    openHistoryPanel() {
+        const overlay = document.getElementById('history-panel-overlay');
+        const historyList = document.getElementById('history-list');
+
+        if (!overlay || !historyList) return;
+
+        // 获取所有历史记录
+        const snapshots = this.historyManager.getAllSnapshots();
+
+        // 渲染历史列表
+        if (snapshots.length === 0) {
+            historyList.innerHTML = `
+                <div class="history-empty">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <polyline points="12 6 12 12 16 14"/>
+                    </svg>
+                    <p>${this.languageManager.get('noHistory') || '暂无历史记录'}</p>
+                </div>
+            `;
+        } else {
+            historyList.innerHTML = snapshots
+                .map((snapshot, index) => {
+                    const isCurrent = index === 0; // 最新的是当前状态
+                    const previousSnapshot = snapshots[index + 1]; // 获取前一个状态用于比较
+                    const detailsHtml = this.generateChangeDetails(previousSnapshot?.state, snapshot.state);
+
+                    return `
+                        <div class="history-item ${isCurrent ? 'current' : ''}" data-snapshot-id="${snapshot.id}">
+                            ${snapshot.thumbnail ? `<img src="${snapshot.thumbnail}" alt="Snapshot" class="history-thumbnail">` : '<div class="history-thumbnail" style="background: #f0f0f0;"></div>'}
+                            <div class="history-info">
+                                <p class="history-label">${snapshot.label}</p>
+                                <p class="history-time">${this.formatTimestamp(snapshot.timestamp)}</p>
+                                <span class="history-operation">${this.getOperationLabel(snapshot.operation)}</span>
+                                ${detailsHtml}
+                            </div>
+                        </div>
+                    `;
+                })
+                .join('');
+
+            // 绑定点击事件
+            historyList.querySelectorAll('.history-item').forEach((item) => {
+                item.addEventListener('click', () => {
+                    const snapshotId = item.dataset.snapshotId;
+                    this.historyManager.jumpToSnapshot(snapshotId);
+                    overlay.style.display = 'none';
+                });
+            });
+        }
+
+        // 显示面板
+        overlay.style.display = 'flex';
+
+        // 绑定清空历史按钮
+        const clearBtn = document.getElementById('clear-history-btn');
+        if (clearBtn) {
+            clearBtn.onclick = () => {
+                this.confirmClearHistory().then((confirmed) => {
+                    if (confirmed) {
+                        this.historyManager.clear();
+                        this.openHistoryPanel(); // 重新渲染
+                    }
+                });
+            };
+        }
+
+        // 点击背景关闭
+        overlay.onclick = (e) => {
+            if (e.target === overlay) {
+                overlay.style.display = 'none';
+            }
+        };
+    }
+
+    /**
+     * 格式化时间戳
+     * @param {number} timestamp - 时间戳
+     * @returns {string} 格式化的时间字符串
+     */
+    formatTimestamp(timestamp) {
+        const date = new Date(timestamp);
+        const now = new Date();
+        const diffMinutes = Math.floor((now - date) / 60000);
+
+        if (diffMinutes < 1) return this.languageManager.get('justNow') || '刚刚';
+        if (diffMinutes < 60) return `${diffMinutes} ${this.languageManager.get('minutesAgo') || '分钟前'}`;
+        if (diffMinutes < 1440)
+            return `${Math.floor(diffMinutes / 60)} ${this.languageManager.get('hoursAgo') || '小时前'}`;
+
+        return date.toLocaleString('zh-CN', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+        });
+    }
+
+    /**
+     * 获取操作标签
+     * @param {string} operation - 操作类型
+     * @returns {string} 操作标签
+     */
+    getOperationLabel(operation) {
+        const labels = {
+            'image-upload': this.languageManager.get('operationImageUpload') || '上传图片',
+            'metadata-change': this.languageManager.get('operationMetadataChange') || '修改设置',
+            'text-style-change': this.languageManager.get('operationTextStyleChange') || '文字样式',
+            'blur-change': this.languageManager.get('operationBlurChange') || '模糊效果',
+            'logo-change': this.languageManager.get('operationLogoChange') || 'Logo 设置',
+            'template-applied': this.languageManager.get('operationTemplateApplied') || '应用模板',
+            'batch-setting-change': this.languageManager.get('operationBatchSettingChange') || '批量设置',
+        };
+        return labels[operation] || operation;
+    }
+
+    /**
+     * 确认清空历史
+     * @returns {Promise<boolean>} 用户确认结果
+     */
+    async confirmClearHistory() {
+        return await Dialog.confirm(
+            this.languageManager.get('confirmClearHistory') ||
+                '确定清空所有历史记录吗？此操作无法撤销。'
+        );
+    }
+
+    /**
+     * 生成变更详情的 HTML
+     * @param {Object} oldState - 旧状态
+     * @param {Object} newState - 新状态
+     * @returns {string} 详情 HTML
+     */
+    generateChangeDetails(oldState, newState) {
+        if (!oldState || !newState) return '';
+
+        const changes = [];
+        const fieldLabels = {
+            camera: this.languageManager.get('camera') || '相机',
+            lens: this.languageManager.get('lens') || '镜头',
+            location: this.languageManager.get('location') || '位置',
+            iso: 'ISO',
+            aperture: this.languageManager.get('aperture') || '光圈',
+            shutter: this.languageManager.get('shutter') || '快门',
+            copyright: this.languageManager.get('copyright') || '版权',
+            notes: this.languageManager.get('notes') || '注释',
+            fontFamily: '字体',
+            fontWeight: '字重',
+            fontSize: '字号',
+            fontPosition: '文字位置',
+            displayMode: '显示模式',
+            fontColor: '文字颜色',
+            fontOpacity: '文字透明度',
+            strokeColor: '描边颜色',
+            strokeWidth: '描边宽度',
+            textShadow: '文字阴影',
+            bgMask: '背景遮罩',
+            bgMaskOpacity: '遮罩透明度',
+            textRotation: '文字旋转',
+            letterSpacing: '字间距',
+            lineHeight: '行高',
+            blurValue: '模糊度',
+            logoId: 'Logo',
+        };
+
+        // 比较各个字段
+        for (const [key, label] of Object.entries(fieldLabels)) {
+            if (oldState[key] !== newState[key]) {
+                let changeHtml = '';
+
+                // 特殊处理某些字段
+                if (key === 'textShadow' || key === 'bgMask') {
+                    const oldValue = oldState[key] ? '启用' : '禁用';
+                    const newValue = newState[key] ? '启用' : '禁用';
+                    changeHtml = `
+                        <div class="history-details-item">
+                            <span class="history-details-label">${label}:</span>
+                            <span class="history-details-value">${oldValue}</span>
+                            <span class="history-details-arrow">→</span>
+                            <span class="history-details-value">${newValue}</span>
+                        </div>
+                    `;
+                } else if (key === 'logoId') {
+                    if (!oldState[key] && newState[key]) {
+                        changeHtml = '<div class="history-details-item"><span class="history-details-label">添加 Logo</span></div>';
+                    } else if (oldState[key] && !newState[key]) {
+                        changeHtml = '<div class="history-details-item"><span class="history-details-label">移除 Logo</span></div>';
+                    } else if (oldState[key] !== newState[key]) {
+                        changeHtml = '<div class="history-details-item"><span class="history-details-label">更换 Logo</span></div>';
+                    }
+                } else {
+                    // 截断过长的值
+                    const oldValue = String(oldState[key] || '').substring(0, 30);
+                    const newValue = String(newState[key] || '').substring(0, 30);
+                    if (oldValue || newValue) {
+                        changeHtml = `
+                            <div class="history-details-item">
+                                <span class="history-details-label">${label}:</span>
+                                <span class="history-details-value">${oldValue || '空'}</span>
+                                <span class="history-details-arrow">→</span>
+                                <span class="history-details-value">${newValue || '空'}</span>
+                            </div>
+                        `;
+                    }
+                }
+
+                if (changeHtml) {
+                    changes.push(changeHtml);
+                }
+
+                // 最多显示5个变更
+                if (changes.length >= 5) break;
+            }
+        }
+
+        if (changes.length === 0) {
+            return '';
+        }
+
+        return `<div class="history-details">${changes.join('')}</div>`;
     }
 
     /**
@@ -370,6 +785,11 @@ export class ImgEchoApp {
 
         // 刷新画布
         this.scheduleRefresh();
+
+        // 应用完成后保存快照
+        const state = this.collectHistoryState();
+        const canvas = this.imageProcessor.getCanvas();
+        this.historyManager.saveSnapshot(state, 'template-applied', '应用模板', canvas);
 
         console.log('已应用模板设置:', settings);
     }
@@ -656,6 +1076,13 @@ export class ImgEchoApp {
             console.error('EXIF读取失败:', error);
             // 继续执行，不影响图片显示
         }
+
+        // 上传成功后保存快照
+        if (this.imageProcessor.getOriginalImage()) {
+            const state = this.collectHistoryState();
+            const canvas = this.imageProcessor.getCanvas();
+            this.historyManager.saveSnapshot(state, 'image-upload', `上传图片: ${file.name}`, canvas);
+        }
     }
 
     /**
@@ -675,9 +1102,24 @@ export class ImgEchoApp {
     scheduleRefresh() {
         this.imageProcessor.scheduleRefresh(() => {
             this.refreshCanvas();
+
+            // 防抖保存快照（用户停止操作 500ms 后）
+            if (this.imageProcessor.getOriginalImage()) {
+                const state = this.collectHistoryState();
+                const canvas = this.imageProcessor.getCanvas();
+
+                // 使用详细的变更描述
+                this.historyManager.debouncedSnapshot(
+                    state,
+                    'metadata-change',
+                    '修改设置',
+                    canvas,
+                    (oldState, newState) => HistoryManager.getChangeDescription(oldState, newState, this.languageManager)
+                );
+            }
         });
     }
-    
+
     /**
      * 获取应用实例
      */
@@ -711,7 +1153,7 @@ const app = new ImgEchoApp();
 // 页面加载时初始化应用
 window.addEventListener('load', () => {
     app.initialize();
-    
+
     // 暴露scheduleRefresh函数到全局作用域，以便语言管理器可以调用它
     window.scheduleRefresh = () => {
         app.scheduleRefresh();

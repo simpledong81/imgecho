@@ -615,6 +615,8 @@ export class TemplateUI {
                 if (cancelBtn) {
                     cancelBtn.removeEventListener('click', onCancel);
                 }
+                // 隐藏对话框（而不是移除）
+                dialogElement.style.display = 'none';
             };
 
             const onConfirm = () => {

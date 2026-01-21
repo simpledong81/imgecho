@@ -724,32 +724,66 @@ body {
 /* 模式切换器 */
 .mode-switcher {
     display: flex;
-    gap: 4px;
-    background: var(--background-color);
-    border-radius: var(--radius-md);
-    padding: 4px;
+    gap: 6px;
+    background: rgba(0, 0, 0, 0.03);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 6px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .mode-btn {
-    padding: 8px 16px;
+    position: relative;
+    padding: 10px 20px;
     border: none;
     background: transparent;
-    border-radius: var(--radius-sm);
+    border-radius: var(--radius-md);
     cursor: pointer;
-    transition: all var(--transition-fast);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     color: var(--text-secondary);
     font-size: var(--font-size-sm);
-    font-weight: var(--font-weight-normal);
+    font-weight: var(--font-weight-medium);
+    letter-spacing: 0.3px;
+    overflow: hidden;
+}
+
+.mode-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(66, 153, 225, 0.1) 0%, rgba(66, 153, 225, 0.05) 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 0;
+}
+
+.mode-btn:hover::before {
+    opacity: 1;
 }
 
 .mode-btn:hover {
-    background: rgba(66, 153, 225, 0.1);
     color: var(--primary-color);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(66, 153, 225, 0.2);
 }
 
 .mode-btn.active {
-    background: var(--primary-color);
+    background: linear-gradient(135deg, var(--primary-color) 0%, #3182ce 100%);
     color: white;
+    box-shadow: 0 4px 8px rgba(66, 153, 225, 0.3), 0 1px 3px rgba(0, 0, 0, 0.1);
+    transform: translateY(-1px);
+    font-weight: var(--font-weight-bold);
+}
+
+.mode-btn.active::before {
+    opacity: 0;
+}
+
+.mode-btn:active {
+    transform: translateY(0);
 }
 
 /* 批量面板 */
@@ -1471,5 +1505,190 @@ body {
     .logo-item-actions {
         width: 100%;
         justify-content: flex-end;
+    }
+}
+
+/* ==========================================================================
+   历史记录和撤销/重做功能样式
+   ========================================================================== */
+
+/* 撤销/重做控件 */
+.undo-redo-controls {
+    display: flex;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-md);
+    flex-wrap: wrap;
+}
+
+.undo-redo-controls .btn {
+    flex: 1;
+    min-width: 100px;
+}
+
+/* 禁用状态样式 */
+.btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    pointer-events: none;
+    filter: grayscale(50%);
+}
+
+.btn:disabled:hover {
+    transform: none;
+    box-shadow: none;
+}
+
+/* 历史记录面板 */
+.history-panel-dialog {
+    min-width: 600px;
+    max-width: 800px;
+    max-height: 80vh;
+}
+
+.history-panel-content {
+    max-height: 50vh;
+    overflow-y: auto;
+    padding: var(--spacing-md);
+}
+
+.history-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+/* 历史记录项 */
+.history-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md);
+    background: var(--background-color);
+    border-radius: var(--radius-md);
+    border: 2px solid var(--border-color);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.history-item:hover {
+    background: rgba(66, 153, 225, 0.05);
+    border-color: var(--primary-color);
+    transform: translateX(4px);
+}
+
+.history-item.current {
+    border-color: var(--primary-color);
+    background: rgba(66, 153, 225, 0.1);
+}
+
+/* 缩略图 */
+.history-thumbnail {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-color);
+    flex-shrink: 0;
+}
+
+/* 历史信息 */
+.history-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+.history-label {
+    font-weight: var(--font-weight-medium);
+    color: var(--text-primary);
+    font-size: var(--font-size-base);
+    margin: 0;
+}
+
+.history-time {
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+.history-operation {
+    display: inline-block;
+    padding: 2px 8px;
+    background: var(--secondary-color);
+    border-radius: var(--radius-sm);
+    font-size: var(--font-size-xs);
+    color: var(--text-secondary);
+}
+
+/* 历史记录详细信息 */
+.history-details {
+    margin-top: var(--spacing-xs);
+    padding: var(--spacing-sm);
+    background: rgba(0, 0, 0, 0.03);
+    border-radius: var(--radius-sm);
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+    line-height: 1.6;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.history-details-item {
+    margin-bottom: var(--spacing-xs);
+}
+
+.history-details-item:last-child {
+    margin-bottom: 0;
+}
+
+.history-details-label {
+    font-weight: var(--font-weight-medium);
+    color: var(--text-primary);
+    display: inline-block;
+    min-width: 80px;
+}
+
+.history-details-value {
+    color: var(--text-secondary);
+}
+
+.history-details-arrow {
+    margin: 0 4px;
+    color: var(--primary-color);
+}
+
+/* 空状态 */
+.history-empty {
+    text-align: center;
+    padding: var(--spacing-xl);
+    color: var(--text-secondary);
+}
+
+.history-empty svg {
+    width: 64px;
+    height: 64px;
+    opacity: 0.3;
+    margin-bottom: var(--spacing-md);
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .history-panel-dialog {
+        min-width: 90vw;
+        max-width: 95vw;
+    }
+
+    .undo-redo-controls {
+        flex-direction: column;
+    }
+
+    .undo-redo-controls .btn {
+        width: 100%;
+    }
+
+    .history-thumbnail {
+        width: 60px;
+        height: 60px;
     }
 }
