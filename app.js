@@ -1555,6 +1555,15 @@ export class ImgEchoApp {
         document.getElementById('social-preset').addEventListener('change', () => {
             this.updatePresetInfo();
         });
+
+        // 社交媒体优化面板折叠/展开
+        const socialMediaSection = document.querySelector('.social-media-section');
+        const socialMediaTitle = socialMediaSection.querySelector('h3');
+        if (socialMediaTitle) {
+            socialMediaTitle.addEventListener('click', () => {
+                socialMediaSection.classList.toggle('collapsed');
+            });
+        }
     }
 
     /**

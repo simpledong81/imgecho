@@ -27,7 +27,8 @@ export class BatchUI {
             batchModeBtn: document.getElementById('batch-mode-btn'),
 
             // 批量面板
-            batchPanel: document.getElementById('batch-panel'),
+            batchQueuePanel: document.getElementById('batch-queue-panel'),
+            batchControlsPanel: document.getElementById('batch-controls-panel'),
             queueCount: document.getElementById('queue-count'),
             batchQueue: document.getElementById('batch-queue'),
             clearQueueBtn: document.getElementById('clear-queue-btn'),
@@ -39,6 +40,13 @@ export class BatchUI {
             progressFill: document.getElementById('progress-fill'),
             progressCurrent: document.getElementById('progress-current'),
             progressTotal: document.getElementById('progress-total'),
+
+            // 导航按钮
+            batchNavigation: document.getElementById('batch-navigation'),
+            prevImageBtn: document.getElementById('prev-image-btn'),
+            nextImageBtn: document.getElementById('next-image-btn'),
+            currentImageIndex: document.getElementById('current-image-index'),
+            totalImages: document.getElementById('total-images'),
 
             // 文件输入
             fileInput: document.getElementById('file-input'),
@@ -52,11 +60,68 @@ export class BatchUI {
         // 监听队列更新
         this.batchProcessor.addEventListener('queue-updated', () => {
             this.renderQueue();
+            this.updateNavigationState();
         });
 
         // 监听图片选择
         this.batchProcessor.addEventListener('image-selected', (e) => {
             this.updateActiveItem(e.detail.index);
+            this.updateNavigationState();
+        });
+
+        // 导航按钮点击
+        if (this.elements.prevImageBtn) {
+            this.elements.prevImageBtn.addEventListener('click', (e) => {
+                e.stopPropagation(); // 阻止事件冒泡到 drop-zone
+                this.navigateToPrevious();
+            });
+        }
+
+        if (this.elements.nextImageBtn) {
+            this.elements.nextImageBtn.addEventListener('click', (e) => {
+                e.stopPropagation(); // 阻止事件冒泡到 drop-zone
+                this.navigateToNext();
+            });
+        }
+
+        // 阻止导航容器的点击事件冒泡
+        if (this.elements.batchNavigation) {
+            this.elements.batchNavigation.addEventListener('click', (e) => {
+                e.stopPropagation(); // 阻止事件冒泡到 drop-zone
+            });
+        }
+
+        // 键盘快捷键
+        this.setupKeyboardShortcuts();
+    }
+
+    /**
+     * 设置键盘快捷键
+     */
+    setupKeyboardShortcuts() {
+        document.addEventListener('keydown', (e) => {
+            // 只在批量模式下生效
+            if (this.mode !== 'batch') return;
+
+            // 排除文本输入框
+            if (
+                document.activeElement.tagName === 'INPUT' ||
+                document.activeElement.tagName === 'TEXTAREA'
+            ) {
+                return;
+            }
+
+            // 左箭头 - 上一张
+            if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                this.navigateToPrevious();
+            }
+
+            // 右箭头 - 下一张
+            if (e.key === 'ArrowRight') {
+                e.preventDefault();
+                this.navigateToNext();
+            }
         });
     }
 
@@ -71,13 +136,17 @@ export class BatchUI {
             // 切换到批量模式
             this.elements.singleModeBtn.classList.remove('active');
             this.elements.batchModeBtn.classList.add('active');
-            this.elements.batchPanel.style.display = 'block';
+            this.elements.batchQueuePanel.style.display = 'block';
+            this.elements.batchControlsPanel.style.display = 'block';
             this.elements.fileInput.setAttribute('multiple', '');
+            this.updateNavigationVisibility();
         } else {
             // 切换到单张模式
             this.elements.singleModeBtn.classList.add('active');
             this.elements.batchModeBtn.classList.remove('active');
-            this.elements.batchPanel.style.display = 'none';
+            this.elements.batchQueuePanel.style.display = 'none';
+            this.elements.batchControlsPanel.style.display = 'none';
+            this.elements.batchNavigation.style.display = 'none';
             this.elements.fileInput.removeAttribute('multiple');
         }
     }
@@ -319,5 +388,74 @@ export class BatchUI {
      */
     getMode() {
         return this.mode;
+    }
+
+    /**
+     * 导航到上一张图片
+     */
+    navigateToPrevious() {
+        const currentIndex = this.batchProcessor.currentIndex;
+        if (currentIndex > 0) {
+            this.batchProcessor.selectImage(currentIndex - 1);
+        }
+    }
+
+    /**
+     * 导航到下一张图片
+     */
+    navigateToNext() {
+        const currentIndex = this.batchProcessor.currentIndex;
+        const queueLength = this.batchProcessor.getQueue().length;
+        if (currentIndex < queueLength - 1) {
+            this.batchProcessor.selectImage(currentIndex + 1);
+        }
+    }
+
+    /**
+     * 更新导航状态
+     */
+    updateNavigationState() {
+        const queue = this.batchProcessor.getQueue();
+        const queueLength = queue.length;
+        const currentIndex = this.batchProcessor.currentIndex;
+
+        if (!this.elements.batchNavigation) return;
+
+        // 更新计数显示
+        if (this.elements.currentImageIndex) {
+            this.elements.currentImageIndex.textContent = currentIndex + 1;
+        }
+        if (this.elements.totalImages) {
+            this.elements.totalImages.textContent = queueLength;
+        }
+
+        // 更新按钮禁用状态
+        if (this.elements.prevImageBtn) {
+            this.elements.prevImageBtn.disabled = currentIndex === 0;
+        }
+        if (this.elements.nextImageBtn) {
+            this.elements.nextImageBtn.disabled = currentIndex === queueLength - 1;
+        }
+
+        // 更新导航栏可见性
+        this.updateNavigationVisibility();
+    }
+
+    /**
+     * 更新导航栏可见性
+     */
+    updateNavigationVisibility() {
+        if (!this.elements.batchNavigation) return;
+
+        const queue = this.batchProcessor.getQueue();
+        const queueLength = queue.length;
+        const isBatchMode = this.mode === 'batch';
+
+        // 批量模式且有图片时显示导航
+        if (isBatchMode && queueLength > 0) {
+            this.elements.batchNavigation.style.display = 'flex';
+        } else {
+            this.elements.batchNavigation.style.display = 'none';
+        }
     }
 }

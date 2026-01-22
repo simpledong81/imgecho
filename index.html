@@ -44,6 +44,33 @@
 
         <main class="main-content">
             <section class="image-section">
+                <!-- 批量处理队列 - 显示在顶部 -->
+                <section class="batch-queue-panel" id="batch-queue-panel" style="display: none;">
+                    <div class="batch-header">
+                        <h3>
+                            <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/>
+                                <polyline points="13 2 13 9 20 9"/>
+                            </svg>
+                            批量队列 (<span id="queue-count">0</span> 张图片)
+                        </h3>
+                        <button id="clear-queue-btn" class="btn btn-secondary btn-sm">清空队列</button>
+                    </div>
+
+                    <div class="batch-queue" id="batch-queue">
+                        <!-- 动态渲染队列项 -->
+                    </div>
+
+                    <div class="batch-progress" id="batch-progress" style="display: none;">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progress-fill"></div>
+                        </div>
+                        <p class="progress-text">
+                            处理中: <span id="progress-current">0</span> / <span id="progress-total">0</span>
+                        </p>
+                    </div>
+                </section>
+
                 <article class="canvas-container" id="drop-zone">
                     <div class="upload-hint">
                         <svg class="upload-icon" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -55,6 +82,23 @@
                         <p class="hint-text">支持 JPG、PNG、WebP 等格式</p>
                     </div>
                     <canvas id="image-canvas"></canvas>
+
+                    <!-- 批量模式导航按钮 -->
+                    <div class="batch-navigation" id="batch-navigation" style="display: none;">
+                        <button id="prev-image-btn" class="nav-btn nav-btn-prev" aria-label="Previous image" title="上一张 (←)">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="15 18 9 12 15 6"/>
+                            </svg>
+                        </button>
+                        <div class="image-counter">
+                            <span id="current-image-index">1</span> / <span id="total-images">1</span>
+                        </div>
+                        <button id="next-image-btn" class="nav-btn nav-btn-next" aria-label="Next image" title="下一张 (→)">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="9 18 15 12 9 6"/>
+                            </svg>
+                        </button>
+                    </div>
                 </article>
 
                 <section class="controls">
@@ -124,11 +168,12 @@
                     </div>
 
                     <!-- 社交媒体优化 -->
-                    <div class="social-media-section" style="margin-top: 15px;">
+                    <div class="social-media-section collapsed" style="margin-top: 15px;">
                         <h3 data-i18n="socialMediaOptimization">社交媒体优化</h3>
 
-                        <!-- 预设尺寸选择 -->
-                        <div class="form-group">
+                        <div class="social-media-content">
+                            <!-- 预设尺寸选择 -->
+                            <div class="form-group">
                             <label for="social-preset" data-i18n="socialPreset">预设尺寸</label>
                             <select id="social-preset" class="form-control">
                                 <option value="">选择预设尺寸...</option>
@@ -184,6 +229,7 @@
                                 </svg>
                                 导出多尺寸
                             </button>
+                        </div>
                         </div>
                     </div>
 
@@ -257,17 +303,8 @@
                     </div>
                 </section>
 
-                <!-- 批量处理面板 -->
-                <section class="batch-panel" id="batch-panel" style="display: none;">
-                    <div class="batch-header">
-                        <h3>批量队列 (<span id="queue-count">0</span> 张图片)</h3>
-                        <button id="clear-queue-btn" class="btn btn-secondary">清空队列</button>
-                    </div>
-
-                    <div class="batch-queue" id="batch-queue">
-                        <!-- 动态渲染队列项 -->
-                    </div>
-
+                <!-- 批量处理控制按钮 -->
+                <section class="batch-controls-panel" id="batch-controls-panel" style="display: none;">
                     <div class="batch-controls">
                         <button id="apply-to-all-btn" class="btn btn-secondary">
                             <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -281,17 +318,8 @@
                                 <polyline points="7 10 12 15 17 10"/>
                                 <line x1="12" y1="15" x2="12" y2="3"/>
                             </svg>
-                            导出全部为 ZIP
+                            导出全部图片
                         </button>
-                    </div>
-
-                    <div class="batch-progress" id="batch-progress" style="display: none;">
-                        <div class="progress-bar">
-                            <div class="progress-fill" id="progress-fill"></div>
-                        </div>
-                        <p class="progress-text">
-                            处理中: <span id="progress-current">0</span> / <span id="progress-total">0</span>
-                        </p>
                     </div>
                 </section>
             </section>
