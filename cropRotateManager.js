@@ -129,7 +129,6 @@ export class CropRotateManager {
         }
 
         const canvas = this.imageProcessor.getCanvas();
-        const ctx = this.imageProcessor.getContext();
 
         console.log('开始裁剪，裁剪框:', this.cropBox);
 

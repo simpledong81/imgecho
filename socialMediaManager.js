@@ -232,7 +232,9 @@ export class SocialMediaManager {
             }
 
             // 使用 Clipboard API 复制
+            // eslint-disable-next-line no-undef
             await navigator.clipboard.write([
+                // eslint-disable-next-line no-undef
                 new ClipboardItem({
                     'image/png': blob
                 })
@@ -268,9 +270,9 @@ export class SocialMediaManager {
      * @param {HTMLCanvasElement} sourceCanvas - 源画布
      * @param {Array<string>} presetKeys - 预设键名数组
      * @param {string} fitMode - 适配模式
-     * @param {Function} languageManager - 语言管理器
+     * @param {Function} _languageManager - 语言管理器（保留供将来使用）
      */
-    static async exportMultipleSizesAsZip(sourceCanvas, presetKeys, fitMode, languageManager) {
+    static async exportMultipleSizesAsZip(sourceCanvas, presetKeys, fitMode, _languageManager) {
         // 动态加载 JSZip 库
         if (typeof window.JSZip === 'undefined') {
             await this.loadJSZip();
