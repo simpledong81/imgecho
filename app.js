@@ -20,6 +20,7 @@ import { LogoManager } from './logoManager.js';
 import { LogoUI } from './logoUI.js';
 import { HistoryManager } from './historyManager.js';
 import { CropRotateManager } from './cropRotateManager.js';
+import { SocialMediaManager } from './socialMediaManager.js';
 
 /**
  * 主应用类
@@ -221,6 +222,9 @@ export class ImgEchoApp {
 
         // 裁剪/旋转系统事件监听
         this.setupCropRotateListeners();
+
+        // 社交媒体优化事件监听
+        this.setupSocialMediaListeners();
     }
 
     /**
@@ -1521,6 +1525,196 @@ export class ImgEchoApp {
      */
     refreshCanvas() {
         MetadataRenderer.updateMetadataOverlay(this.imageProcessor, this.languageManager, null, this.logoManager);
+    }
+
+    /**
+     * 设置社交媒体优化事件监听器
+     */
+    setupSocialMediaListeners() {
+        // 应用预设按钮
+        document.getElementById('apply-preset-btn').addEventListener('click', () => {
+            this.applySocialMediaPreset();
+        });
+
+        // 复制到剪贴板按钮
+        document.getElementById('copy-to-clipboard-btn').addEventListener('click', async () => {
+            await this.copyToClipboard();
+        });
+
+        // 导出多尺寸按钮
+        document.getElementById('export-multi-sizes-btn').addEventListener('click', async () => {
+            await this.exportMultipleSizes();
+        });
+
+        // 安全区域显示切换
+        document.getElementById('show-safe-area').addEventListener('change', (e) => {
+            this.toggleSafeArea(e.target.checked);
+        });
+
+        // 预设选择变化时，自动更新提示信息
+        document.getElementById('social-preset').addEventListener('change', () => {
+            this.updatePresetInfo();
+        });
+    }
+
+    /**
+     * 应用社交媒体预设尺寸
+     */
+    applySocialMediaPreset() {
+        const presetKey = document.getElementById('social-preset').value;
+        if (!presetKey) {
+            Dialog.alert(this.languageManager.get('pleaseSelectPreset'), this.languageManager.get('tip'));
+            return;
+        }
+
+        const fitMode = document.getElementById('fit-mode').value;
+        const originalImage = this.imageProcessor.getOriginalImage();
+
+        if (!originalImage) {
+            Dialog.alert(this.languageManager.get('pleaseUploadImage'), this.languageManager.get('tip'));
+            return;
+        }
+
+        // 创建临时画布用于调整尺寸
+        const tempCanvas = document.createElement('canvas');
+        tempCanvas.width = originalImage.width;
+        tempCanvas.height = originalImage.height;
+        const tempCtx = tempCanvas.getContext('2d');
+        tempCtx.drawImage(originalImage, 0, 0);
+
+        // 应用预设尺寸
+        const resizedCanvas = SocialMediaManager.resizeToPreset(tempCanvas, presetKey, fitMode);
+
+        // 将调整后的图片设置为新的原始图片
+        const img = new Image();
+        img.onload = () => {
+            // 设置新的原始图片（这会更新画布尺寸并显示图片）
+            this.imageProcessor.setOriginalImage(img);
+            this.imageProcessor.displayImageOnCanvas(img);
+            this.imageProcessor.updateCanvasContainer(true);
+
+            // 等待图片渲染完成后刷新以绘制元数据
+            requestAnimationFrame(() => {
+                this.refreshCanvas();
+
+                // 如果开启了安全区域显示，在元数据之上绘制安全区域
+                if (document.getElementById('show-safe-area').checked) {
+                    requestAnimationFrame(() => {
+                        this.drawSafeAreaOverlay(presetKey);
+                    });
+                }
+            });
+
+            // 保存历史记录
+            const preset = SocialMediaManager.getPreset(presetKey);
+            const presetName = this.languageManager.currentLanguage === 'zh' ? preset.nameZh : preset.name;
+            const state = this.collectHistoryState();
+            const canvas = this.imageProcessor.getCanvas();
+            this.historyManager.saveSnapshot(
+                state,
+                'metadata-change',
+                `${this.languageManager.get('applySocialPreset')}: ${presetName}`,
+                canvas
+            );
+        };
+        img.src = resizedCanvas.toDataURL('image/png');
+    }
+
+    /**
+     * 切换安全区域显示
+     */
+    toggleSafeArea(show) {
+        const presetKey = document.getElementById('social-preset').value;
+        if (!presetKey) {
+            if (!show) {
+                // 如果没有选择预设，只需要刷新画布
+                this.refreshCanvas();
+            }
+            return;
+        }
+
+        if (show) {
+            // 显示安全区域
+            requestAnimationFrame(() => {
+                this.drawSafeAreaOverlay(presetKey);
+            });
+        } else {
+            // 隐藏安全区域，重新刷新画布
+            this.refreshCanvas();
+        }
+    }
+
+    /**
+     * 绘制安全区域叠加层
+     */
+    drawSafeAreaOverlay(presetKey) {
+        // 先刷新画布
+        this.refreshCanvas();
+
+        // 然后在画布上绘制安全区域
+        const canvas = this.imageProcessor.getCanvas();
+        const ctx = canvas.getContext('2d');
+        SocialMediaManager.drawSafeArea(ctx, presetKey);
+    }
+
+    /**
+     * 更新预设信息提示
+     */
+    updatePresetInfo() {
+        const presetKey = document.getElementById('social-preset').value;
+        if (!presetKey) return;
+
+        const preset = SocialMediaManager.getPreset(presetKey);
+        // 这里可以显示预设的详细信息，比如尺寸、宽高比等
+        console.log('Selected preset:', preset);
+    }
+
+    /**
+     * 复制当前图片到剪贴板
+     */
+    async copyToClipboard() {
+        const canvas = this.imageProcessor.getCanvas();
+        if (!canvas) {
+            await Dialog.alert(this.languageManager.get('noImageToExport'), this.languageManager.get('tip'));
+            return;
+        }
+
+        const success = await SocialMediaManager.copyToClipboard(canvas);
+        if (success) {
+            await Dialog.alert(this.languageManager.get('copiedToClipboard'), this.languageManager.get('success'));
+        } else {
+            await Dialog.alert(this.languageManager.get('copyToClipboardFailed'), this.languageManager.get('error'));
+        }
+    }
+
+    /**
+     * 导出多个社交媒体尺寸
+     */
+    async exportMultipleSizes() {
+        const originalImage = this.imageProcessor.getOriginalImage();
+        if (!originalImage) {
+            await Dialog.alert(this.languageManager.get('pleaseUploadImage'), this.languageManager.get('tip'));
+            return;
+        }
+
+        // 创建临时画布
+        const tempCanvas = document.createElement('canvas');
+        tempCanvas.width = originalImage.width;
+        tempCanvas.height = originalImage.height;
+        const tempCtx = tempCanvas.getContext('2d');
+        tempCtx.drawImage(originalImage, 0, 0);
+
+        // 获取所有预设的键名
+        const presetKeys = Object.keys(SocialMediaManager.PRESETS);
+        const fitMode = document.getElementById('fit-mode').value;
+
+        try {
+            await SocialMediaManager.exportMultipleSizesAsZip(tempCanvas, presetKeys, fitMode, this.languageManager);
+            await Dialog.alert(this.languageManager.get('multiSizeExportSuccess'), this.languageManager.get('success'));
+        } catch (error) {
+            console.error('Multi-size export failed:', error);
+            await Dialog.alert(this.languageManager.get('multiSizeExportFailed'), this.languageManager.get('error'));
+        }
     }
 
     /**

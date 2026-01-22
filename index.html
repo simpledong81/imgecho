@@ -123,6 +123,70 @@
                         </div>
                     </div>
 
+                    <!-- 社交媒体优化 -->
+                    <div class="social-media-section" style="margin-top: 15px;">
+                        <h3 data-i18n="socialMediaOptimization">社交媒体优化</h3>
+
+                        <!-- 预设尺寸选择 -->
+                        <div class="form-group">
+                            <label for="social-preset" data-i18n="socialPreset">预设尺寸</label>
+                            <select id="social-preset" class="form-control">
+                                <option value="">选择预设尺寸...</option>
+                                <option value="instagram_square">Instagram 正方形 (1080x1080)</option>
+                                <option value="instagram_story">Instagram 故事 (1080x1920)</option>
+                                <option value="wechat_moments">微信朋友圈 (1280x1280)</option>
+                                <option value="weibo">微博配图 (2048x2048)</option>
+                                <option value="youtube_thumbnail">YouTube 缩略图 (1280x720)</option>
+                                <option value="twitter_post">Twitter 配图 (1200x675)</option>
+                                <option value="facebook_post">Facebook 配图 (1200x630)</option>
+                            </select>
+                        </div>
+
+                        <!-- 适配模式 -->
+                        <div class="form-group">
+                            <label for="fit-mode" data-i18n="fitMode">适配模式</label>
+                            <select id="fit-mode" class="form-control">
+                                <option value="cover" data-i18n="fitModeCover">覆盖（填满，可能裁剪）</option>
+                                <option value="contain" data-i18n="fitModeContain">包含（完整显示，可能留白）</option>
+                                <option value="fill" data-i18n="fitModeFill">拉伸（填满，可能变形）</option>
+                            </select>
+                        </div>
+
+                        <!-- 安全区域提示 -->
+                        <div class="form-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="show-safe-area">
+                                <span data-i18n="showSafeArea">显示安全区域提示</span>
+                            </label>
+                            <small class="form-text" data-i18n="safeAreaHint">红色区域表示可能被UI遮挡的部分</small>
+                        </div>
+
+                        <!-- 操作按钮 -->
+                        <div class="social-media-actions">
+                            <button id="apply-preset-btn" class="btn btn-primary" data-i18n="applyPreset">
+                                <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="20 6 9 17 4 12"/>
+                                </svg>
+                                应用预设
+                            </button>
+                            <button id="copy-to-clipboard-btn" class="btn btn-secondary" data-i18n="copyToClipboard">
+                                <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                                </svg>
+                                复制到剪贴板
+                            </button>
+                            <button id="export-multi-sizes-btn" class="btn btn-secondary" data-i18n="exportMultiSizes">
+                                <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                    <polyline points="7 10 12 15 17 10"/>
+                                    <line x1="12" y1="15" x2="12" y2="3"/>
+                                </svg>
+                                导出多尺寸
+                            </button>
+                        </div>
+                    </div>
+
                     <!-- 裁剪/旋转控件 -->
                     <div class="crop-rotate-controls" style="margin-top: 10px;">
                         <button id="crop-btn" class="btn btn-secondary" aria-label="Crop" data-i18n="crop">

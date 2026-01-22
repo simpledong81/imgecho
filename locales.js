@@ -202,6 +202,34 @@ const locales = {
         exportFormatWebp: 'WebP (Smaller Size)',
         exportFormatPdf: 'PDF (Document Format)',
 
+        // 社交媒体优化
+        socialMediaOptimization: 'Social Media Optimization',
+        socialPreset: 'Preset Size',
+        selectPresetSize: 'Select preset size...',
+        presetInstagramSquare: 'Instagram Square (1080x1080)',
+        presetInstagramStory: 'Instagram Story (1080x1920)',
+        presetWechatMoments: 'WeChat Moments (1280x1280)',
+        presetWeibo: 'Weibo Post (2048x2048)',
+        presetYoutubeThumbnail: 'YouTube Thumbnail (1280x720)',
+        presetTwitterPost: 'Twitter Post (1200x675)',
+        presetFacebookPost: 'Facebook Post (1200x630)',
+        fitMode: 'Fit Mode',
+        fitModeCover: 'Cover (Fill, may crop)',
+        fitModeContain: 'Contain (Full display, may have borders)',
+        fitModeFill: 'Fill (Stretch to fill)',
+        showSafeArea: 'Show Safe Area',
+        safeAreaHint: 'Red areas indicate parts that may be obscured by UI elements',
+        applyPreset: 'Apply Preset',
+        copyToClipboard: 'Copy to Clipboard',
+        exportMultiSizes: 'Export Multiple Sizes',
+        pleaseSelectPreset: 'Please select a preset size',
+        copiedToClipboard: 'Image copied to clipboard successfully!',
+        copyToClipboardFailed: 'Failed to copy image to clipboard',
+        multiSizeExportSuccess: 'Multiple sizes exported successfully!',
+        multiSizeExportFailed: 'Failed to export multiple sizes',
+        applySocialPreset: 'Apply Social Media Preset',
+        noImageToExport: 'No image to export',
+
         // 裁剪和旋转
         crop: 'Crop',
         rotateLeft: 'Rotate Left 90°',
@@ -417,6 +445,34 @@ const locales = {
         exportFormatWebp: 'WebP (更小体积)',
         exportFormatPdf: 'PDF (文档格式)',
 
+        // 社交媒体优化
+        socialMediaOptimization: '社交媒体优化',
+        socialPreset: '预设尺寸',
+        selectPresetSize: '选择预设尺寸...',
+        presetInstagramSquare: 'Instagram 正方形 (1080x1080)',
+        presetInstagramStory: 'Instagram 故事 (1080x1920)',
+        presetWechatMoments: '微信朋友圈 (1280x1280)',
+        presetWeibo: '微博配图 (2048x2048)',
+        presetYoutubeThumbnail: 'YouTube 缩略图 (1280x720)',
+        presetTwitterPost: 'Twitter 配图 (1200x675)',
+        presetFacebookPost: 'Facebook 配图 (1200x630)',
+        fitMode: '适配模式',
+        fitModeCover: '覆盖（填满，可能裁剪）',
+        fitModeContain: '包含（完整显示，可能留白）',
+        fitModeFill: '拉伸（填满，可能变形）',
+        showSafeArea: '显示安全区域提示',
+        safeAreaHint: '红色区域表示可能被UI遮挡的部分',
+        applyPreset: '应用预设',
+        copyToClipboard: '复制到剪贴板',
+        exportMultiSizes: '导出多尺寸',
+        pleaseSelectPreset: '请选择一个预设尺寸',
+        copiedToClipboard: '图片已成功复制到剪贴板！',
+        copyToClipboardFailed: '复制图片到剪贴板失败',
+        multiSizeExportSuccess: '多尺寸导出成功！',
+        multiSizeExportFailed: '多尺寸导出失败',
+        applySocialPreset: '应用社交媒体预设',
+        noImageToExport: '没有可导出的图片',
+
         // 裁剪和旋转
         crop: '裁剪',
         rotateLeft: '左旋90°',
@@ -607,6 +663,27 @@ class LanguageManager {
             exportFormatSelect.options[3].text = this.get('exportFormatPdf');
         }
 
+        // 更新适配模式选项
+        const fitModeSelect = document.getElementById('fit-mode');
+        if (fitModeSelect) {
+            fitModeSelect.options[0].text = this.get('fitModeCover');
+            fitModeSelect.options[1].text = this.get('fitModeContain');
+            fitModeSelect.options[2].text = this.get('fitModeFill');
+        }
+
+        // 更新社交媒体预设选项
+        const socialPresetSelect = document.getElementById('social-preset');
+        if (socialPresetSelect) {
+            socialPresetSelect.options[0].text = this.get('selectPresetSize');
+            socialPresetSelect.options[1].text = this.get('presetInstagramSquare');
+            socialPresetSelect.options[2].text = this.get('presetInstagramStory');
+            socialPresetSelect.options[3].text = this.get('presetWechatMoments');
+            socialPresetSelect.options[4].text = this.get('presetWeibo');
+            socialPresetSelect.options[5].text = this.get('presetYoutubeThumbnail');
+            socialPresetSelect.options[6].text = this.get('presetTwitterPost');
+            socialPresetSelect.options[7].text = this.get('presetFacebookPost');
+        }
+
         // 更新 Logo 选择选项（包括 data-i18n 标记的选项）
         const logoSelect = document.getElementById('logo-select');
         if (logoSelect) {
@@ -699,6 +776,27 @@ class LanguageManager {
             const svg = resetTransformBtn.querySelector('svg');
             resetTransformBtn.textContent = this.get('resetTransform');
             if (svg) resetTransformBtn.insertBefore(svg, resetTransformBtn.firstChild);
+        }
+
+        // 更新社交媒体优化按钮
+        const applyPresetBtn = document.getElementById('apply-preset-btn');
+        const copyToClipboardBtn = document.getElementById('copy-to-clipboard-btn');
+        const exportMultiSizesBtn = document.getElementById('export-multi-sizes-btn');
+
+        if (applyPresetBtn) {
+            const svg = applyPresetBtn.querySelector('svg');
+            applyPresetBtn.textContent = this.get('applyPreset');
+            if (svg) applyPresetBtn.insertBefore(svg, applyPresetBtn.firstChild);
+        }
+        if (copyToClipboardBtn) {
+            const svg = copyToClipboardBtn.querySelector('svg');
+            copyToClipboardBtn.textContent = this.get('copyToClipboard');
+            if (svg) copyToClipboardBtn.insertBefore(svg, copyToClipboardBtn.firstChild);
+        }
+        if (exportMultiSizesBtn) {
+            const svg = exportMultiSizesBtn.querySelector('svg');
+            exportMultiSizesBtn.textContent = this.get('exportMultiSizes');
+            if (svg) exportMultiSizesBtn.insertBefore(svg, exportMultiSizesBtn.firstChild);
         }
 
         // 更新撤销/重做/历史记录按钮
