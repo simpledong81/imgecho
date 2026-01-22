@@ -186,13 +186,26 @@ export class ImgEchoApp {
 
         // 导出按钮事件
         document.getElementById('export-btn').addEventListener('click', () => {
-            ExportManager.exportImageWithCanvas(this.imageProcessor, this.languageManager);
+            const format = document.getElementById('export-format').value;
+            const quality = parseInt(document.getElementById('export-quality').value);
+            ExportManager.exportImageWithCanvas(this.imageProcessor, this.languageManager, format, quality);
         });
 
         // 导出信息页按钮事件
         document.getElementById('export-info-btn').addEventListener('click', () => {
             ExportManager.exportInfoPage(this.imageProcessor, this.languageManager);
         });
+
+        // 导出质量滑块事件
+        const exportQualitySlider = document.getElementById('export-quality');
+        if (exportQualitySlider) {
+            exportQualitySlider.addEventListener('input', (e) => {
+                const exportQualityValue = document.getElementById('export-quality-value');
+                if (exportQualityValue) {
+                    exportQualityValue.textContent = e.target.value;
+                }
+            });
+        }
 
         // 批量模式事件监听
         this.setupBatchEventListeners();

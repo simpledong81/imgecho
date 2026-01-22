@@ -85,7 +85,7 @@
                     </div>
 
                     <div class="export-controls">
-                        <button id="export-btn" class="btn btn-primary" aria-label="Export image">
+                        <button id="export-btn" class="btn btn-primary" aria-label="Export image" data-i18n="exportImage">
                             <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
                                 <polyline points="7 10 12 15 17 10"/>
@@ -93,7 +93,7 @@
                             </svg>
                             导出图片
                         </button>
-                        <button id="export-info-btn" class="btn btn-secondary" aria-label="Export information page">
+                        <button id="export-info-btn" class="btn btn-secondary" aria-label="Export information page" data-i18n="exportInfoPage">
                             <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
                                 <polyline points="14,2 14,8 20,8"/>
@@ -103,6 +103,24 @@
                             </svg>
                             导出信息页
                         </button>
+                    </div>
+
+                    <!-- 导出选项 -->
+                    <div class="export-options" style="margin-top: 10px;">
+                        <div class="form-group">
+                            <label for="export-format" data-i18n="exportFormat">导出格式</label>
+                            <select id="export-format" class="form-control">
+                                <option value="jpeg">JPEG</option>
+                                <option value="png">PNG (保留透明度)</option>
+                                <option value="webp">WebP (更小体积)</option>
+                                <option value="pdf">PDF (文档格式)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="export-quality" data-i18n="exportQuality">导出质量 (<span id="export-quality-value">95</span>%)</label>
+                            <input type="range" id="export-quality" class="form-control" min="1" max="100" value="95" step="1">
+                            <small class="form-text" data-i18n="exportQualityHint">质量越高，文件越大。推荐 85-95%</small>
+                        </div>
                     </div>
 
                     <!-- 裁剪/旋转控件 -->

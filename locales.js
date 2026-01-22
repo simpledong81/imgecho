@@ -193,6 +193,15 @@ const locales = {
         operationTemplateApplied: 'Template Applied',
         operationBatchSettingChange: 'Batch Settings',
 
+        // 导出格式和质量
+        exportFormat: 'Export Format',
+        exportQuality: 'Export Quality',
+        exportQualityHint: 'Higher quality = larger file size. Recommended: 85-95%',
+        exportFormatJpeg: 'JPEG',
+        exportFormatPng: 'PNG (Preserve Transparency)',
+        exportFormatWebp: 'WebP (Smaller Size)',
+        exportFormatPdf: 'PDF (Document Format)',
+
         // 裁剪和旋转
         crop: 'Crop',
         rotateLeft: 'Rotate Left 90°',
@@ -399,6 +408,15 @@ const locales = {
         operationTemplateApplied: '应用模板',
         operationBatchSettingChange: '批量设置',
 
+        // 导出格式和质量
+        exportFormat: '导出格式',
+        exportQuality: '导出质量',
+        exportQualityHint: '质量越高，文件越大。推荐 85-95%',
+        exportFormatJpeg: 'JPEG',
+        exportFormatPng: 'PNG (保留透明度)',
+        exportFormatWebp: 'WebP (更小体积)',
+        exportFormatPdf: 'PDF (文档格式)',
+
         // 裁剪和旋转
         crop: '裁剪',
         rotateLeft: '左旋90°',
@@ -514,6 +532,14 @@ class LanguageManager {
                 }
             }
         });
+
+        // 特殊处理导出质量标签，保留export-quality-value元素
+        const exportQualityLabel = document.querySelector('label[for="export-quality"]');
+        if (exportQualityLabel) {
+            const exportQualitySlider = document.getElementById('export-quality');
+            const currentValue = exportQualitySlider ? exportQualitySlider.value : '95';
+            exportQualityLabel.innerHTML = `${this.get('exportQuality')} (<span id="export-quality-value">${currentValue}</span>%)`;
+        }
     }
 
     updatePlaceholders() {
@@ -570,6 +596,15 @@ class LanguageManager {
             logoPositionSelect.options[2].text = this.get('positionBottomLeft');
             logoPositionSelect.options[3].text = this.get('positionBottomRight');
             logoPositionSelect.options[4].text = this.get('positionCenter');
+        }
+
+        // 更新导出格式选项
+        const exportFormatSelect = document.getElementById('export-format');
+        if (exportFormatSelect) {
+            exportFormatSelect.options[0].text = this.get('exportFormatJpeg');
+            exportFormatSelect.options[1].text = this.get('exportFormatPng');
+            exportFormatSelect.options[2].text = this.get('exportFormatWebp');
+            exportFormatSelect.options[3].text = this.get('exportFormatPdf');
         }
 
         // 更新 Logo 选择选项（包括 data-i18n 标记的选项）

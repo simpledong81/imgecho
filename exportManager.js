@@ -13,14 +13,16 @@ export class ExportManager {
      * 导出图片函数（仅Canvas方式）
      * @param {ImageProcessor} imageProcessor - 图片处理器实例
      * @param {Object} languageManager - 语言管理器实例
+     * @param {string} format - 导出格式 ('jpeg', 'png', 'webp', 'pdf')
+     * @param {number} quality - 导出质量 (0-100)
      */
-    static async exportImageWithCanvas(imageProcessor, languageManager) {
+    static async exportImageWithCanvas(imageProcessor, languageManager, format = 'jpeg', quality = 95) {
         if (!imageProcessor.getOriginalImage()) {
             await Dialog.alert('请先上传图片！', '提示');
             return;
         }
 
-        this.exportWithCanvas(imageProcessor, languageManager);
+        this.exportWithCanvas(imageProcessor, languageManager, format, quality);
     }
 
     /**
@@ -38,40 +40,124 @@ export class ExportManager {
     }
 
     /**
-     * 使用Canvas导出（原有方式）
+     * 使用Canvas导出（支持多格式）
      * @param {ImageProcessor} imageProcessor - 图片处理器实例
      * @param {Object} languageManager - 语言管理器实例
+     * @param {string} format - 导出格式 ('jpeg', 'png', 'webp', 'pdf')
+     * @param {number} quality - 导出质量 (0-100)
      */
-    static async exportWithCanvas(imageProcessor, languageManager) {
+    static async exportWithCanvas(imageProcessor, languageManager, format = 'jpeg', quality = 95) {
         // 确保画布已完成渲染
         await new Promise(resolve => requestAnimationFrame(resolve));
-        
+
         // 创建新画布专门用于导出
         const exportCanvas = document.createElement('canvas');
         exportCanvas.width = imageProcessor.getCanvas().width;
         exportCanvas.height = imageProcessor.getCanvas().height;
         const exportCtx = exportCanvas.getContext('2d');
-        
+
         // 重新绘制所有内容
         const originalImage = imageProcessor.getOriginalImage();
         exportCtx.drawImage(originalImage, 0, 0);
         MetadataRenderer.updateMetadataOverlay(imageProcessor, languageManager, exportCtx);
-        
+
         // 等待一帧确保绘制完成
         await new Promise(resolve => requestAnimationFrame(resolve));
-        
-        // 创建下载链接
-        exportCanvas.toBlob(blob => {
+
+        // 根据格式导出
+        if (format === 'pdf') {
+            await this.exportToPDF(exportCanvas, quality);
+        } else {
+            await this.exportToImage(exportCanvas, format, quality);
+        }
+    }
+
+    /**
+     * 导出为图片格式
+     * @param {HTMLCanvasElement} canvas - 画布对象
+     * @param {string} format - 格式 ('jpeg', 'png', 'webp')
+     * @param {number} quality - 质量 (0-100)
+     */
+    static async exportToImage(canvas, format, quality) {
+        const mimeType = `image/${format}`;
+        const fileExt = format;
+        const qualityValue = quality / 100;
+
+        canvas.toBlob(blob => {
             if (!blob) {
                 throw new Error('无法创建图片数据');
             }
             const url = URL.createObjectURL(blob);
             const link = document.createElement('a');
             link.href = url;
-            link.download = `photo_${Date.now()}.jpg`;
+            link.download = `photo_${Date.now()}.${fileExt}`;
             link.click();
             setTimeout(() => URL.revokeObjectURL(url), 100);
-        }, 'image/jpeg', 0.95);
+        }, mimeType, qualityValue);
+    }
+
+    /**
+     * 导出为 PDF 格式
+     * @param {HTMLCanvasElement} canvas - 画布对象
+     * @param {number} quality - 质量 (0-100)
+     */
+    static async exportToPDF(canvas, quality) {
+        // 使用 jsPDF 库
+        if (typeof window.jspdf === 'undefined') {
+            await Dialog.alert('PDF 导出功能需要加载额外的库。正在加载...', '提示');
+            // 动态加载 jsPDF
+            await this.loadJsPDF();
+        }
+
+        const { jsPDF } = window.jspdf;
+
+        // 计算 PDF 尺寸（A4 或自适应）
+        const imgWidth = canvas.width;
+        const imgHeight = canvas.height;
+        const ratio = imgWidth / imgHeight;
+
+        // A4 尺寸 (210mm x 297mm)
+        let pdfWidth = 210;
+        let pdfHeight = pdfWidth / ratio;
+
+        // 如果高度超过 A4，则调整
+        if (pdfHeight > 297) {
+            pdfHeight = 297;
+            pdfWidth = pdfHeight * ratio;
+        }
+
+        // 创建 PDF
+        const orientation = imgWidth > imgHeight ? 'landscape' : 'portrait';
+        const pdf = new jsPDF({
+            orientation,
+            unit: 'mm',
+            format: 'a4'
+        });
+
+        // 将 canvas 转为图片数据
+        const imgData = canvas.toDataURL('image/jpeg', quality / 100);
+
+        // 居中添加图片
+        const x = (pdf.internal.pageSize.getWidth() - pdfWidth) / 2;
+        const y = (pdf.internal.pageSize.getHeight() - pdfHeight) / 2;
+
+        pdf.addImage(imgData, 'JPEG', x, y, pdfWidth, pdfHeight);
+
+        // 保存 PDF
+        pdf.save(`photo_${Date.now()}.pdf`);
+    }
+
+    /**
+     * 动态加载 jsPDF 库
+     */
+    static async loadJsPDF() {
+        return new Promise((resolve, reject) => {
+            const script = document.createElement('script');
+            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+            script.onload = resolve;
+            script.onerror = reject;
+            document.head.appendChild(script);
+        });
     }
 
     /**
